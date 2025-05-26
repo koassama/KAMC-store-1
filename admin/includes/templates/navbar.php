@@ -75,7 +75,7 @@ body::after,
     }
 
     .logo {
-      width: 100px;
+      width: 200px;
       height: auto;
       transition: opacity 0.4s ease, transform 0.4s ease;
     }
@@ -85,7 +85,6 @@ body::after,
     .user-dropdown { position: relative; }
 
     .user-info {
-      
       display: flex;
       align-items: center;
       background-color: rgba(255,255,255,0.1);
@@ -380,7 +379,7 @@ $page = $stmt->fetch();
   
   <!-- Logo in center -->
   <div style="position: absolute; right: 50%; transform: translateX(50%);">
-    <img src="<?php echo $logo . $page['logo']; ?>" alt="logo" class="logo">
+    <img src="imgs\Kamc Logo Guideline-06.svg" alt="logo" class="logo">
   </div>
 
   <!-- User Dropdown -->
