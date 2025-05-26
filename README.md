@@ -43,25 +43,7 @@ admin/
 ├── insert_user.php          # Add users
 ├── index.php                # Login page
 ├── .htaccess                # Rewrite rules
-⚙️ Installation
-Clone or extract the project:
-
-bash
-Copy
-Edit
-git clone https://github.com/YOUR_USERNAME/admin-device-manager.git
-cd admin-device-manager/admin
-Setup the database:
-
-Import the SQL file (stor database).
-
-Update your connect.php credentials.
-
-Run with Apache + PHP:
-
-Make sure mod_rewrite is enabled for .htaccess.
-
-Place in htdocs/ (XAMPP) or /var/www/html/.
+⚙️ Installation  
 
 🧪 Requirements
 PHP 7.x or later
