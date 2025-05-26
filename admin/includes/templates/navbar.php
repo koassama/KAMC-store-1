@@ -85,6 +85,7 @@ body::after,
     .user-dropdown { position: relative; }
 
     .user-info {
+      
       display: flex;
       align-items: center;
       background-color: rgba(255,255,255,0.1);
