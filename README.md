@@ -1,25 +1,20 @@
-📊 Admin Device Management System
+ 📊 Admin Device Management System
+
 This is a PHP-based admin dashboard system to manage outgoing and incoming devices within an IT or facilities management environment. The system supports device tracking, maintenance handling, reporting, and inventory management.
 
-🌐 Live Features
-🔐 Admin Authentication
+## 🌐 Live Features
 
-📋 Manage Incoming & Outgoing Devices (comming.php, products.php, returns.php)
+- 🔐 Admin Authentication
+- 📋 Manage Incoming & Outgoing Devices (`comming.php`, `products.php`, `returns.php`)
+- 🧾 Generate & Download Word Reports (`download_word.php`)
+- 👤 User Management (`users.php`)
+- 📊 Dashboard Overview (`dashboard.php`)
+- 📦 Inventory Management (`piece.php`, `consumers.php`)
+- 📁 Styled with Bootstrap 4 and Google Fonts
 
-🧾 Generate & Download Word Reports (download_word.php)
+## 🧱 Project Structure
 
-👤 User Management (users.php)
-
-📊 Dashboard Overview (dashboard.php)
-
-📦 Inventory Management (piece.php, consumers.php)
-
-📁 Styled with Bootstrap 4 and Google Fonts
-
-🧱 Project Structure
-bash
-Copy
-Edit
+```
 admin/
 ├── comming.php              # Device management page
 ├── products.php             # Inventory page
@@ -43,18 +38,32 @@ admin/
 ├── insert_user.php          # Add users
 ├── index.php                # Login page
 ├── .htaccess                # Rewrite rules
-⚙️ Installation  
+```
 
-🧪 Requirements
-PHP 7.x or later
+## ⚙️ Installation
 
-MySQL/MariaDB
+1. Clone or extract the project:
+   ```bash
+   git clone https://github.com/YOUR_USERNAME/admin-device-manager.git
+   cd admin-device-manager/admin
+   ```
 
-Apache/Nginx
+2. Setup the database:
+   - Import the SQL file (`stor` database).
+   - Update your `connect.php` credentials.
 
-📝 Customization
-Update UI assets in /layout/css and /imgs
+3. Run with Apache + PHP:
+   - Make sure mod_rewrite is enabled for `.htaccess`.
+   - Place in `htdocs/` (XAMPP) or `/var/www/html/`.
 
-Add more device types or statuses in the database
+## 🧪 Requirements
 
-Extend role-based permissions via $_SESSION['type']
+- PHP 7.x or later
+- MySQL/MariaDB
+- Apache/Nginx
+
+## 📝 Customization
+
+- Update UI assets in `/layout/css` and `/imgs`
+- Add more device types or statuses in the database
+- Extend role-based permissions via `$_SESSION['type']`README.md…]()
