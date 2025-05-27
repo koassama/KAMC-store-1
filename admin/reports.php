@@ -13,15 +13,25 @@
           $pageTitle = 'صفحة ادارة التقارير';
           include 'init.php';
           $ord = 'ASC';
+          $search = isset($_GET['search']) ? $_GET['search'] : '';
+$query = "SELECT * FROM reports WHERE 1";
 
+if (!empty($search)) {
+    $query .= " AND Device_Type LIKE :search";
+}
+$query .= " ORDER BY id $ord";
+$stmt = $conn->prepare($query);
+if (!empty($search)) {
+    $stmt->bindValue(':search', "%$search%");
+}
+$stmt->execute();
+$posts = $stmt->fetchAll();
           if (isset($_GET['ordering']))
           {
             $ord = $_GET['ordering'];
           }
 
-          $stmt = $conn->prepare("SELECT * FROM reports  ORDER BY id $ord");
-                    $stmt->execute();
-                    $posts = $stmt->fetchAll();
+         
 
 
             ?>
@@ -32,6 +42,11 @@
 
                   <div class="col-md-6">
                     <div class="right-header management-header">
+                      <form method="GET" action="reports.php" class="d-flex justify-content-end align-items-center mb-2" style="max-width: 300px;">
+    <input type="hidden" name="page" value="manage">
+    <input type="text" name="search" class="form-control form-control-sm" placeholder="ابحث باسم نوع الجهاز" value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>">
+    <button type="submit" class="btn btn-primary btn-sm mx-2">بحث</button>
+</form>
                       <div class="btns">
                         <a href="reports.php?page=add" class="add-btn"> <i class="fas fa-plus"></i> </a>
                       </div>
