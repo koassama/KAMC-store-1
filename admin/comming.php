@@ -653,7 +653,7 @@ $posts = $stmt->fetchAll();
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-        <?php
+       <?php
         include $tpl . 'footer.php';
     } elseif ($page == 'insert') {
         include 'init.php';
@@ -682,6 +682,22 @@ $posts = $stmt->fetchAll();
             header("Location: comming.php?page=manage");
             exit;
         }
+    } elseif ($page == 'delete') {
+        include 'init.php';
+        $id = isset($_GET['id']) && is_numeric($_GET['id']) ? intval($_GET['id']) : 0;
+        if ($id > 0) {
+            $stmt = $conn->prepare("SELECT * FROM comming WHERE id = ? LIMIT 1");
+            $stmt->execute([$id]);
+
+            if ($stmt->rowCount() > 0) {
+                $stmt = $conn->prepare("DELETE FROM comming WHERE id = ?");
+                $stmt->execute([$id]);
+            }
+        }
+        header('Location: comming.php?page=manage');
+        exit;
+    } elseif ($page == 'edit' || $page == 'update' || $page == 'restore') {
+        // other pages continue here...
     } else {
         header('location: dashboard.php');
         exit;
@@ -691,3 +707,4 @@ $posts = $stmt->fetchAll();
 }
 ob_end_flush();
 ?>
+
