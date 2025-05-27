@@ -19,9 +19,22 @@
             $ord = $_GET['ordering'];
           }
 
-          $stmt = $conn->prepare("SELECT * FROM returns  ORDER BY id $ord");
-                    $stmt->execute();
-                    $posts = $stmt->fetchAll();
+          $search = isset($_GET['search']) ? $_GET['search'] : '';
+$query = "SELECT * FROM returns WHERE 1";
+
+if (!empty($search)) {
+    $query .= " AND serial_number LIKE :search"; // عدلي العمود حسب اللي تبغي تبحثي فيه
+}
+
+$query .= " ORDER BY id $ord";
+$stmt = $conn->prepare($query);
+
+if (!empty($search)) {
+    $stmt->bindValue(':search', "%$search%");
+}
+
+$stmt->execute();
+$posts = $stmt->fetchAll();
 
 
             ?>
@@ -34,11 +47,18 @@
                     <div class="right-header management-header">
                       <div class="btns">
                         <a href="returns.php?page=add" class="add-btn"> <i class="fas fa-plus"></i> </a>
+                        <div class="col-md-6">
+  <form method="GET" action="returns.php" class="d-flex justify-content-end align-items-center">
+    <input type="hidden" name="page" value="manage">
+    <input type="text" name="search" class="form-control form-control-sm w-50" placeholder="ابحث برقم الجهاز" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+    <button type="submit" class="btn btn-primary btn-sm ms-2">بحث</button>
+  </form>
+</div>
                       </div>
                     </div>
                   </div>
                   <div class="col-md-6">
-                    <div class="left-header management-header">
+                    <div class="left-header management-header"style="margin-top: 50px;">
                       <h1>قائمة الصيانة</h1>
                       <p class="tt">اجمالي <?php echo Total($conn, 'returns ') ?> </p>
                     </div>
