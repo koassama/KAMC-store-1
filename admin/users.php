@@ -17,7 +17,22 @@
         $ord = $_GET['ordering'];
       }
 
-      $users = AllItems($conn, 'users', $ord);
+      $search = isset($_GET['search']) ? $_GET['search'] : '';
+$query = "SELECT * FROM users WHERE 1";
+
+if (!empty($search)) {
+    $query .= " AND fname LIKE :search"; // عدلي العمود حسب اللي تبغي تبحثي فيه
+}
+
+$query .= " ORDER BY id $ord";
+$stmt = $conn->prepare($query);
+
+if (!empty($search)) {
+    $stmt->bindValue(':search', "%$search%");
+}
+
+$stmt->execute();
+$users = $stmt->fetchAll();
 
 
       ?>
@@ -34,7 +49,14 @@
                         ?>
                         <div class="btns">
                           <a href="users.php?page=add" id="open-add-page" class="add-btn"><i class="fas fa-plus"></i></a>
-
+                           
+  
+</div>
+<form method="GET" action="users.php" class="d-flex w-100" style="max-width: 300px;">
+    <input type="hidden" name="page" value="manage">
+    <input type="text" name="search" class="form-control form-control-sm me-2" placeholder="ابحث باسم الموظف" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+    <button type="submit" class="btn btn-primary btn-sm">بحث</button>
+  </form>
                         </div>
                         <?php
                     }
