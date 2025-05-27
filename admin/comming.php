@@ -13,9 +13,22 @@ if (isset($_SESSION['admin'])) {
             $ord = $_GET['ordering'];
         }
 
-        $stmt = $conn->prepare("SELECT * FROM comming WHERE status = 0 ORDER BY id DESC");
-        $stmt->execute();
-        $posts = $stmt->fetchAll();
+       $search = isset($_GET['search']) ? $_GET['search'] : '';
+$query = "SELECT * FROM comming WHERE status = 0";
+
+if (!empty($search)) {
+    $query .= " AND sr LIKE :search";
+}
+
+$query .= " ORDER BY id DESC";
+$stmt = $conn->prepare($query);
+
+if (!empty($search)) {
+    $stmt->bindValue(':search', "%$search%");
+}
+
+$stmt->execute();
+$posts = $stmt->fetchAll();
 
         ?>
 <!DOCTYPE html>
@@ -380,6 +393,11 @@ if (isset($_SESSION['admin'])) {
                         <div class="right-header management-header">
                             <div class="btns">
                                 <a href="comming.php?page=add" class="add-btn"> <i class="fas fa-plus"></i> </a>
+                                <form method="GET" action="comming.php" class="d-flex justify-content-end align-items-center mb-2" style="max-width: 300px;">
+    <input type="hidden" name="page" value="manage">
+    <input type="text" name="search" class="form-control form-control-sm" placeholder="ابحث بالرقم التسلسلي" value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>">
+    <button type="submit" class="btn btn-primary btn-sm mx-2">بحث</button>
+</form>
                             </div>
                         </div>
                     </div>
