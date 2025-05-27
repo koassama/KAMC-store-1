@@ -18,7 +18,18 @@
         $ord = $_GET['ordering'];
       }
 
-      $stmt = $conn->prepare("SELECT * FROM products  WHERE status = 0 ORDER BY id DESC");
+     $search = isset($_GET['search']) ? $_GET['search'] : '';
+$query = "SELECT * FROM products WHERE status = 0";
+if (!empty($search)) {
+    $query .= " AND device_name LIKE :search";
+}
+$query .= " ORDER BY id DESC";
+$stmt = $conn->prepare($query);
+if (!empty($search)) {
+    $stmt->bindValue(':search', "%$search%");
+}
+$stmt->execute();
+$posts = $stmt->fetchAll();
                 $stmt->execute();
                 $posts = $stmt->fetchAll();
 
@@ -33,7 +44,12 @@
                 <div class="right-header management-header">
                   <div class="btns">
                     <a href="products.php?page=add" id="open-add-page" class="add-btn"><i class="fas fa-plus"></i></a>
-
+                  <form method="GET" action="products.php" class="d-flex justify-content-start align-items-center" style="gap: 5px;">
+                   <input type="search" name="search" class="form-control form-control-sm" placeholder="ابحث باسم الجهاز"
+                   value="<?php echo htmlspecialchars($search); ?>" style="max-width: 200px;">
+                   <button type="submit" class="btn btn-primary btn-sm">بحث</button>
+                  </form>
+  >
                   </div>
                 </div>
               </div>
@@ -50,8 +66,8 @@
               </div>
 
               <div class="col-md-12">
-                <div class="management-body">
-                  <div class="default-management-table">
+<div class="management-body" style="margin-top: 50px;">
+                    <div class="default-management-table">
                     <table class="table" id="categories-table">
                       <thead>
                         <tr>
