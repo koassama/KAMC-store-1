@@ -19,10 +19,22 @@
             $ord = $_GET['ordering'];
           }
 
-          $stmt = $conn->prepare("SELECT * FROM consumers  ORDER BY id $ord");
-                    $stmt->execute();
-                    $posts = $stmt->fetchAll();
+          $search = isset($_GET['search']) ? $_GET['search'] : '';
+$query = "SELECT * FROM consumers WHERE 1";
 
+if (!empty($search)) {
+    $query .= " AND sr LIKE :search"; // عدلي العمود إذا تبغي البحث باسم الجهاز مثلاً
+}
+
+$query .= " ORDER BY id $ord";
+$stmt = $conn->prepare($query);
+
+if (!empty($search)) {
+    $stmt->bindValue(':search', "%$search%");
+}
+
+$stmt->execute();
+$posts = $stmt->fetchAll();
 
             ?>
             <div class="default-management-list users-management">
@@ -34,6 +46,13 @@
                     <div class="right-header management-header">
                       <div class="btns">
                         <a href="consumers.php?page=add" class="add-btn"> <i class="fas fa-plus"></i> </a>
+                         <div class="col-md-6 d-flex justify-content-end align-items-center mb-3">
+  <form method="GET" action="consumers.php" class="d-flex w-100" style="max-width: 300px;">
+    <input type="hidden" name="page" value="manage">
+    <input type="text" name="search" class="form-control form-control-sm me-2" placeholder="ابحث بالرقم التسلسلي" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+    <button type="submit" class="btn btn-primary btn-sm">بحث</button>
+  </form>
+</div>
                       </div>
                     </div>
                   </div>
@@ -50,7 +69,7 @@
                   </div>
 
                   <div class="col-md-12">
-                    <div class="management-body">
+                    <div class="management-body"style="margin-top: 50px;">
                       <div class="default-management-table">
                         <table class="table" id="categories-table">
                           <thead>
