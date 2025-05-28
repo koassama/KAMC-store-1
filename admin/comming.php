@@ -340,6 +340,52 @@ $posts = $stmt->fetchAll();
             width:120px;
         }
 
+        .search-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.search-container input[type="text"] {
+    border: 2px solid #d1d5db;
+    border-radius: 999px;
+    padding: 8px 20px;
+    font-size: 15px;
+    outline: none;
+    transition: border 0.3s ease;
+    width: 240px;
+}
+
+.search-container input[type="text"]::placeholder {
+    color: #6b7280;
+    font-weight: 400;
+}
+
+.search-container input[type="text"]:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+}
+
+.search-container button {
+    background: linear-gradient(to left, #1e40af, #0d4f8b);
+    color: white;
+    padding: 8px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.search-container button:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(to left, #3b82f6, #1e40af);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .container-fluid {
@@ -397,11 +443,12 @@ $posts = $stmt->fetchAll();
                         <div class="right-header management-header">
                             <div class="btns">
                                 <a href="comming.php?page=add" class="add-btn"> <i class="fas fa-plus"></i> </a>
-                                <form method="GET" action="comming.php" class="d-flex justify-content-end align-items-center mb-2" style="max-width: 300px;">
+                            <form method="GET" action="comming.php" class="search-container">
     <input type="hidden" name="page" value="manage">
-    <input type="text" name="search" class="form-control form-control-sm" placeholder="ابحث بالرقم التسلسلي" value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>">
-    <button type="submit" class="btn-serach btn-primary btn-sm mx-2">بحث</button>
+    <input type="text" name="search" placeholder="ابحث بالرقم التسلسلي" value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>">
+    <button type="submit">بحث</button>
 </form>
+
                             </div>
                         </div>
                     </div>
