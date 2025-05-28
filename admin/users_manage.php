@@ -198,53 +198,145 @@ if (isset($_SESSION['admin'])) {
             height: 16px;
         }
 
-        /* Form Styles */
-        .btn-primary {
-            background: linear-gradient(135deg, #0d4f8b, #1e40af);
-            border: none;
-            color: white;
-            border-radius: 12px;
-            padding: 8px 16px;
-            transition: all 0.3s ease;
-        }
+       /* Form Control (Input Field) Styles */
+.form-control {
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    font-family: 'Almarai', sans-serif;
+}
 
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #1e40af, #3b82f6);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(13, 79, 139, 0.3);
-        }
+.form-control:focus {
+    border-color: #0d4f8b;
+    box-shadow: 0 0 0 3px rgba(13, 79, 139, 0.1);
+    outline: none;
+}
 
-        .form-control {
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 8px 12px;
-            transition: all 0.3s ease;
-            font-family: 'Almarai', sans-serif;
-        }
+.form-control-sm {
+    /* Small form control variant - inherits from .form-control */
+}
 
-        .form-control:focus {
-            border-color: #0d4f8b;
-            box-shadow: 0 0 0 3px rgba(13, 79, 139, 0.1);
-        }
+/* Search Button Styles */
+.btn-serach {
+    width: 120px;
+}
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
+.btn-primary {
+    background: linear-gradient(135deg, #0d4f8b, #1e40af);
+    border: none;
+    color: white;
+}
 
-            .cnt-spc {
-                padding: 20px;
-            }
+.btn-primary:hover {
+    background: linear-gradient(135deg, #1e40af, #3b82f6);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(13, 79, 139, 0.3);
+}
 
-            .management-header h1 {
-                font-size: 22px;
-            }
+/* General Button Styles */
+.btn {
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+    margin: 5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
 
-            .table-responsive {
-                border-radius: 15px;
-            }
-        }
+.btn-sm {
+    padding: 8px 16px;
+    font-size: 14px;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Search Form Container */
+.d-flex {
+    display: flex;
+}
+
+.justify-content-end {
+    justify-content: flex-end;
+}
+
+.align-items-center {
+    align-items: center;
+}
+
+.mb-2 {
+    margin-bottom: 0.5rem;
+}
+
+.mx-2 {
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+}
+
+.search-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.search-container input[type="text"] {
+    border: 2px solid #d1d5db;
+    border-radius: 999px;
+    padding: 8px 20px;
+    font-size: 15px;
+    outline: none;
+    transition: border 0.3s ease;
+    width: 240px;
+}
+
+.search-container input[type="text"]::placeholder {
+    color: #6b7280;
+    font-weight: 400;
+}
+
+.search-container input[type="text"]:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+}
+
+.search-container button {
+    background: linear-gradient(to left, #1e40af, #0d4f8b);
+    color: white;
+    padding: 8px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.search-container button:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(to left, #3b82f6, #1e40af);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+
+/* Responsive Design for Search */
+@media (max-width: 768px) {
+    .btn-serach {
+        width: 100px;
+        font-size: 12px;
+    }
+    
+    .form-control {
+        font-size: 14px;
+        padding: 10px 12px;
+    }
+}
     </style>
 </head>
 <body style="margin-right: 250px; margin-left: 20px; margin-top: 40px">
@@ -259,10 +351,11 @@ if (isset($_SESSION['admin'])) {
                                 <i class="fas fa-plus"></i>
                             </a>
                         </div>
-                        <form method="GET" action="users_manage.php" class="d-flex w-100 mt-3" style="max-width: 300px;">
-                            <input type="text" name="search" class="form-control form-control-sm me-2" placeholder="ابحث باسم الموظف" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
-                            <button type="submit" class="btn btn-primary btn-sm">بحث</button>
-                        </form>
+                        <form method="GET" action="users_manage.php" class="search-container">
+    <input type="text" name="search" placeholder="ابحث بالرقم التسلسلي" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+    <button type="submit">بحث</button>
+</form>
+
                         <?php endif; ?>
                     </div>
                 </div>
