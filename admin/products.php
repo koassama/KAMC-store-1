@@ -1,950 +1,425 @@
 <?php
-  ob_start();
-  session_start();
-  if (isset($_SESSION['admin']))
-  {
+ob_start();
+session_start();
+if (isset($_SESSION['admin'])) {
+    $pageTitle = 'صفحة ادارة المخزون';
+    include 'init.php';
+    $ord = 'DESC';
 
-
-    $page = isset($_GET['page']) ? $_GET['page'] : 'manage';
-
-    if ($page == 'manage')
-    {
-      $pageTitle = 'صفحة ادارة المخزون';
-      include 'init.php';
-      $ord = 'DESC';
-
-      if (isset($_GET['ordering']))
-      {
+    if (isset($_GET['ordering'])) {
         $ord = $_GET['ordering'];
-      }
+    }
 
-     $search = isset($_GET['search']) ? $_GET['search'] : '';
-$query = "SELECT * FROM products WHERE status = 0";
-if (!empty($search)) {
-    $query .= " AND device_name LIKE :search";
+    $search = isset($_GET['search']) ? $_GET['search'] : '';
+    $query = "SELECT * FROM products WHERE status = 0";
+    if (!empty($search)) {
+        $query .= " AND device_name LIKE :search";
+    }
+    $query .= " ORDER BY id DESC";
+    $stmt = $conn->prepare($query);
+    if (!empty($search)) {
+        $stmt->bindValue(':search', "%$search%");
+    }
+    $stmt->execute();
+    $posts = $stmt->fetchAll();
+?>
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo $pageTitle; ?></title>
+    <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Almarai', sans-serif;
+            background-color: #f1f4f8;
+            direction: rtl;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            padding: 30px;
+        }
+
+        .cnt-spc {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin-top: 20px;
+        }
+
+        /* Header Styles */
+        .management-header {
+            margin-bottom: 30px;
+        }
+
+        .management-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0;
+        }
+
+        .management-header .tt {
+            color: #64748b;
+            font-size: 16px;
+            margin-top: 5px;
+        }
+
+        /* Button Styles */
+        .add-btn {
+            background: linear-gradient(135deg, #0d4f8b, #1e40af);
+            color: white;
+            padding: 12px 15px;
+            border-radius: 12px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            box-shadow: 0 4px 15px rgba(13, 79, 139, 0.3);
+        }
+
+        .add-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(13, 79, 139, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Table Styles */
+        .default-management-table {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            margin-top: 20px;
+        }
+
+        .table {
+            margin: 0;
+            border: none;
+        }
+
+        .table thead th {
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            border: none;
+            padding: 20px 15px;
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 14px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .table tbody td {
+            padding: 18px 15px;
+            border-top: 1px solid #f1f5f9;
+            vertical-align: middle;
+            color: #374151;
+        }
+
+        .table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f8fafc;
+            transform: scale(1.01);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .f-n {
+            font-weight: 600;
+            color: #1e293b;
+            margin: 0;
+        }
+
+        /* Avatar/Image Styles */
+        .avatar img {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 2px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+
+        .avatar img:hover {
+            transform: scale(1.1);
+            border-color: #0d4f8b;
+        }
+
+        /* Action Buttons */
+        .list-group {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .list-group-item {
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        .list-group-item a {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            gap: 6px;
+        }
+
+        .text-danger {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .text-danger:hover {
+            background: #fee2e2;
+            color: #b91c1c;
+            transform: translateY(-2px);
+            text-decoration: none;
+        }
+
+        .text-warning {
+            background: #fffbeb;
+            color: #d97706;
+            border: 1px solid #fed7aa;
+        }
+
+        .text-warning:hover {
+            background: #fef3c7;
+            color: #92400e;
+            transform: translateY(-2px);
+            text-decoration: none;
+        }
+
+        /* Form Styles */
+        .btn-primary {
+            background: linear-gradient(135deg, #0d4f8b, #1e40af);
+            border: none;
+            color: white;
+            border-radius: 12px;
+            padding: 8px 16px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(13, 79, 139, 0.3);
+        }
+
+        .form-control {
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 8px 12px;
+            transition: all 0.3s ease;
+            font-family: 'Almarai', sans-serif;
+        }
+
+        .form-control:focus {
+            border-color: #0d4f8b;
+            box-shadow: 0 0 0 3px rgba(13, 79, 139, 0.1);
+        }
+
+        /* Search Form */
+        .search-form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 15
+        }
+            
+            .search-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 15px 0;
+    max-width: 300px;
 }
-$query .= " ORDER BY id DESC";
-$stmt = $conn->prepare($query);
-if (!empty($search)) {
-    $stmt->bindValue(':search', "%$search%");
+
+.search-container input[type="text"] {
+    border: 2px solid #d1d5db;
+    border-radius: 999px;
+    padding: 10px 16px;
+    font-size: 15px;
+    width: 100%;
+    outline: none;
+    transition: border 0.3s ease, box-shadow 0.3s ease;
+    font-family: 'Almarai', sans-serif;
 }
-$stmt->execute();
-$posts = $stmt->fetchAll();
-                $stmt->execute();
-                $posts = $stmt->fetchAll();
 
+.search-container input[type="text"]:focus {
+    border-color: #0d4f8b;
+    box-shadow: 0 0 0 3px rgba(13, 79, 139, 0.1);
+}
 
-        ?>
-        <div class="default-management-list users-management">
-          <div class="container cnt-spc">
+.search-container button {
+    background: linear-gradient(135deg, #0d4f8b, #1e40af);
+    color: white;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.search-container button:hover {
+    background: linear-gradient(135deg, #1e40af, #3b82f6);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+px;
+        }
+
+        
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .cnt-spc {
+                padding: 20px;
+            }
+
+            .management-header h1 {
+                font-size: 22px;
+            }
+
+            .table-responsive {
+                border-radius: 15px;
+            }
+
+            .list-group {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body style="margin-right: 250px; margin-left: 20px; margin-top: 40px">
+    <div class="default-management-list users-management">
+        <div class="container cnt-spc">
             <div class="row">
+                <div class="col-md-6">
+                    <div class="right-header management-header">
+                        <div class="btns">
+                            <a href="products_add.php" id="open-add-page" class="add-btn">
+                                <i class="fas fa-plus"></i>
+                            </a>
+                            <form method="GET" action="consumers.php" class="search-container">
+    <input type="text" name="search" placeholder="ابحث بالرقم التسلسلي" value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>">
+    <button type="submit">بحث</button>
+</form>
 
-
-              <div class="col-md-6">
-                <div class="right-header management-header">
-                  <div class="btns">
-                    <a href="products.php?page=add" id="open-add-page" class="add-btn"><i class="fas fa-plus"></i></a>
-                  <form method="GET" action="products.php" class="d-flex justify-content-start align-items-center" style="gap: 5px;">
-                   <input type="search" name="search" class="form-control form-control-sm" placeholder="ابحث باسم الجهاز"
-                   value="<?php echo htmlspecialchars($search); ?>" style="max-width: 200px;">
-                   <button type="submit" class="btn btn-primary btn-sm">بحث</button>
-                  </form>
-  >
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="left-header management-header">
-                  <h1>قائمة المخزون</h1>
-                  <p class="tt">اجمالي المخزون <?php echo Total_Prod($conn, 'products', "status = 0") ?>منتج</p>
-                </div>
-              </div>
-              <div class="col-md-6 srch-sp">
-                <div class="search-box">
-                  <!-- <input type="search" class="form-control" name="search" id="categories-search" onkeyup="tabletwo()" autocomplete="off" placeholder="search by name"> -->
-                </div>
-              </div>
-
-              <div class="col-md-12">
-<div class="management-body" style="margin-top: 50px;">
-                    <div class="default-management-table">
-                    <table class="table" id="categories-table">
-                      <thead>
-                        <tr>
-                          <th scope="col">id</th>
-                          <th scope="col">صورة الجهاز</th>
-                          <th scope="col">sr</th>
-                          <th scope="col">اسم الجهاز</th>
-
-                          <th scope="col">نوع الجهاز</th>
-
-
-                          <th scope="col">التاريخ</th>
-
-                          <th scope="col">حدث</th>
-
-                        </tr>
-                      </thead>
-                      <tbody>
-
-                        <?php
-                        foreach($posts as $post)
-                        {
-                          ?>
-                          <tr>
-                            <td>
-                              <p><?php echo $post['id'] ?></p>
-                            </td>
-
-                            <td>
-                              <div class="avatar">
-                                <?php
-                                    if (empty($post['device_image']))
-                                    {
-                                      ?>
-                                      <img src="<?php echo $images  ?>default.png" alt="" style="width:40px">
-
-                                      <?php
-                                    }
-                                    if (!empty($post['device_image']))
-                                    {
-                                      ?>
-                                      <img src="<?php echo $images . $post['device_image']  ?>" alt="" style="width:40px">
-
-                                      <?php
-                                    }
-                                 ?>
-                              </div>
-                            </td>      <td>
-                                    <p><?php echo $post['sr'] ?></p>
-                                  </td>
-                                  <td>
-                                    <p><?php echo $post['device_name'] ?></p>
-                                  </td>
-                            <td>
-                              <p class="f-n"><?php echo $post['device_type']; ?> </p>
-                            </td>
-
-
-                            <td>
-                              <?php
-                              echo $post['created_at'];
-                               ?>
-                            </td>
-
-                            <td>
-                              <?php
-
-                                    ?>
-                                    <ul class="list-group">
-<li class="list-group-item">
-<a href="products.php?page=delete&id=<?php echo $post['id']; ?>" class="text-danger" onclick="return confirm('هل تريد الحذف؟');">
-  <i class="fas fa-trash"></i> حذف
-</a>
-</li>
-<li class="list-group-item">
-<a href="products.php?page=edit&id=<?php echo $post['id']; ?>" class="text-warning">
-<i class="fas fa-edit"></i> تعديل
-</a>
-</li>
-</ul>
-                                    <?php
-
-
-
-
-                               ?>
-
-                            </td>
-
-                          </tr>
-                          <tr>
-
-                          <?php
-                        }
-                         ?>
-
-
-
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-
-
-        <?php
-
-
-      ?>
-
-        <?php
-      include $tpl . 'footer.php';
-
-    }elseif ($page == "add") {
-      $pageTitle = 'اضافة منتج جديد';
-      include 'init.php';
-      ?>
-      <div class="add-default-page add-post-page  add-product-page " id="add-page">
-        <div class="container">
-          <div class="row justify-content-center">
-            <div class="col-md-8">
-              <form class="add-fomr" method="POST" action="products.php?page=insert" enctype="multipart/form-data"  id="ca-form-info"  >
-                <h3>اضافة منتج جديد<a style="margin-left:5px;font-size:15px;border-radius: 10px;background:var(--mainColor);color:white;padding:8px" href="products.php?page=manage" class="fas fa-long-arrow-alt-right"></a>   </h3>
-                  <div class="row">
-                    <div class="form-group col-md-6">
-      <label for="sr">seriel number</label>
-      <input type="text" name="sr" id="sr" placeholder=" " require class="form-control" >
-      </div>
-
-       <div class="form-group col-md-6">
-      <label for="device_name">اسم الجهاز</label>
-      <input type="text" name="device_name" id="device_name" placeholder="اسم الجهاز" require class="form-control" >
-    </div>
-
-                    <div class="form-group col-md-6">
-      <label for="device_type">نوع الجهاز</label>
-      <select class="form-control" name="device_type" id="device_type" require>
-
-                                            <option value=""> </option>
-                                            <option value="HP">HP </option>
-                                            <option value="Dell">Dell  </option>
-                                            <option value="Lenovo ">Lenovo   </option>
-                                            <option value="Zebra "> Zebra  </option>
-                                            <option value="جدارية "> جدارية  </option>
-                                            <option value="portabol "> portabol  </option>
-                                            <option value="Signature pad "> Signature pad  </option>
-                                            
-
-                                          </select>
-                                        </div>
-
-    <div class="form-group col-md-6">
-      <label for="device_model">موديل الجهاز</label>
-      <input type="text" name="device_model" id="device_model" placeholder="موديل الجهاز" class="form-control" >
-    </div>
-
-    <div class="form-group col-md-12">
-      <label for="notes">ملاحظات</label>
-      <textarea name="notes" id="notes" placeholder="ملاحظات" class="form-control"></textarea>
-    </div>
-
-    <div class="form-group col-md-6">
-      <label for="employee_id">الرقم الوظيفي</label>
-      <input type="text" name="employee_id" id="employee_id" placeholder="الرقم الوظيفي" class="form-control" >
-    </div>
-
-    <div class="form-group col-md-6">
-      <label for="department">الإدارة</label>
-      <input type="text" name="department" id="department" placeholder="الإدارة" class="form-control" >
-    </div>
-
-
-                    <div class="form-group col-md-12">
-                      <label for="image">صورة الجهاز</label>
-                      <input type="file" name="image" id="image" class="form-control">
+                        </div>
                     </div>
-                  </div>
-
-                <input type="submit" class="btn btn-primary" id="ca-btn-option"  value="اضف ">
-                <div class="err-msg">
-
                 </div>
-              </form>
+                <div class="col-md-6">
+                    <div class="left-header management-header">
+                        <h1>قائمة المخزون</h1>
+                        <p class="tt">اجمالي المخزون <?php echo Total_Prod($conn, 'products', "status = 0"); ?> منتج</p>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="management-body" style="margin-top: 50px;">
+                        <div class="default-management-table">
+                            <table class="table" id="categories-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">الرقم</th>
+                                        <th scope="col">صورة الجهاز</th>
+                                        <th scope="col">الرقم التسلسلي</th>
+                                        <th scope="col">اسم الجهاز</th>
+                                        <th scope="col">نوع الجهاز</th>
+                                        <th scope="col">التاريخ</th>
+                                        <th scope="col">العمليات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach($posts as $post): ?>
+                                    <tr>
+                                        <td>
+                                            <p><?php echo $post['id']; ?></p>
+                                        </td>
+                                        <td>
+                                            <div class="avatar">
+                                                <?php if (empty($post['device_image'])): ?>
+                                                    <img src="<?php echo $images; ?>default.png" alt="صورة افتراضية">
+                                                <?php else: ?>
+                                                    <img src="<?php echo $images . $post['device_image']; ?>" alt="صورة الجهاز">
+                                                <?php endif; ?>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <p><?php echo htmlspecialchars($post['sr']); ?></p>
+                                        </td>
+                                        <td>
+                                            <p><?php echo htmlspecialchars($post['device_name']); ?></p>
+                                        </td>
+                                        <td>
+                                            <p class="f-n"><?php echo htmlspecialchars($post['device_type']); ?></p>
+                                        </td>
+                                        <td>
+                                            <?php echo date('Y-m-d', strtotime($post['created_at'])); ?>
+                                        </td>
+                                        <td>
+                                            <ul class="list-group">
+                                                <li class="list-group-item">
+                                                    <a href="products_edit.php?id=<?php echo $post['id']; ?>" class="text-warning">
+                                                        <i class="fas fa-edit"></i> تعديل
+                                                    </a>
+                                                </li>
+                                                <li class="list-group-item">
+                                                    <a href="products_delete.php?id=<?php echo $post['id']; ?>" class="text-danger" onclick="return confirm('هل تريد الحذف؟');">
+                                                        <i class="fas fa-trash"></i> حذف
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-      <?php
-
-      include $tpl . 'footer.php';
-    }elseif ($page == 'insert') {
-      $pageTitle = 'ادخال البيانات';
-      include 'init.php';
-
-      if ($_SERVER['REQUEST_METHOD'] == 'POST')
-      {
-
-        $sr = $_POST['sr']; // نوع الجهاز
- 
-        $device_name = $_POST['device_name']; // نوع الجهاز
-
-        $device_type = $_POST['device_type']; // نوع الجهاز
-        $device_model = $_POST['device_model']; // موديل الجهاز
-        $notes = $_POST['notes']; // الملاحظات
-        $employee_id = $_POST['employee_id']; // الرقم الوظيفي
-        $department = $_POST['department']; // الإدارة
-
-
-        $imageName = $_FILES['image']['name'];
-        $imageSize = $_FILES['image']['size'];
-        $imageTmp = $_FILES['image']['tmp_name'];
-        $imageType = $_FILES['image']['type'];
-
-
-
-
-        $imageAllowedExtension = array("jpeg", "jpg", "png");
-        $Infunc = explode('.', $imageName);
-        $imageExtension = strtolower(end($Infunc));
-
-
-
-        #$formErrors = array();
-        #if (empty($imageName))
-        #{
-        #  $formErrors[] = "واجهة الجهاز اجباري";
-        #}
-        #if (!empty($imageName) && ! in_array($imageExtension, $imageAllowedExtension))
-        #{
-        #  $formErrors[] = 'نطاق الصورة غير مسموح به';
-        #}
-
-  
-        $formErrors = array();
-
-        if (empty($sr)) {
-            $formErrors[] = "حقل السيريال فارغ";
-        }
-        
-        if (!empty($sr) && Total_Prod($conn, 'products', "sr = '$sr'") > 0) {
-            $formErrors[] = 'السيريال موجود';
-        }
-        if (empty($device_name)) {
-            $formErrors[] = "حقل اسم الجهاز فارغ";
-        }
-        
-        if (!empty($device_name) && Total_Prod($conn, 'products', "device_name = '$device_name'") > 0) {
-            $formErrors[] = 'اسم الجهاز موجود';
-        }
-        if (empty($device_type)) {
-            $formErrors[] = "حقل نوع الجهاز فارغ";
-        }
-        
-
-
- 
-
-                                      foreach ($formErrors as $error ) {
-                                        ?>
-                                        <div class="container" style="margin-top:50px">
-                                          <div class="row justify-content-center">
-                                              <div class="col-md-4">
-                                                <?php
-                                                  echo '<div class="alert alert-danger" style="width: 100%;text-align:center">' . $error . '</div>';
-                                                 ?>
-
-                                              </div>
-                                          </div>
-                                        </div>
-                                        <?php
-                                      }
-
-
-
-                          if (empty($formErrors))
-                            {
-                                $image = rand(0,100000) . '_' . $imageName;
-                                move_uploaded_file($imageTmp, $images . '/' . $image);
-
-
-
-                                $stmt = $conn->prepare("
-                   INSERT INTO products (
-                     sr,
-                     device_name,
-                       device_type,
-                       device_model,
-                       notes,
-                       device_image,
-                       employee_id,
-                       department,
-                       created_at
-                   )
-                   VALUES (
-                        :sr,
-                        :device_name,
-                       :device_type,
-                       :device_model,
-                       :notes,
-                       :device_image,
-                       :employee_id,
-                       :department,
-                       NOW()
-                   )
-               ");
-
-               // تنفيذ الاستعلام مع القيم
-               $stmt->execute(array(
-                 ':sr' => $sr,
-                 ':device_name' => $device_name,
-
-                   ':device_type' => $device_type,
-                   ':device_model' => $device_model,
-                   ':notes' => $notes,
-                   ':device_image' => $image,
-                   ':employee_id' => $employee_id,
-                   ':department' => $department
-               ));
-
-                                ?>
-
-
-                                                                <div class="alert alert-success" style="margin-top: 15px">
-                                  تم اضافة الجهاز بنجاح
-                                </div>
-                                <?php
-                                header('location: products.php?page=manage');
-                              }
-
-
-
-
-      }else {
-        header('location: products.php');
-      }
-      include $tpl . 'footer.php';
-
-      ?>
-      <?php
-    }
-
-    elseif ($page == 'edit') {
-      $pageTitle = "صفحة تعديل المنتجات";
-      include 'init.php';
-
-      $id = isset($_GET['id']) && is_numeric($_GET['id']) ? intval($_GET['id']) : header('location: products.php');
-      $stmt = $conn->prepare("SELECT * FROM products WHERE id= ? LIMIT 1");
-      $stmt->execute(array($id));
-      $checkpost = $stmt->rowCount();
-      $postinfo = $stmt->fetch();
-      if ($checkpost > 0)
-      {
-
-
-          ?>
-          <div class="edit-page user-edit-pages deep-page">
-            <div class="container cnt-spc">
-              <div class="row justify-content-end">
-                <div class="col-md-12">
-                  <div class="pg-tt" style="text-align:right">
-                    <h1> تعديل الجهاز - <?php echo $postinfo['device_type'] ?> <a style="margin-left:5px;font-size:15px;border-radius: 10px;background:var(--mainColor);color:white;padding:8px" href="products.php?page=manage" class="fas fa-long-arrow-alt-right"></a>  </h1>
-                  </div>
-                </div>
-
-                <div class="col-md-12">
-                  <div class="use-fl-info">
-                    <form class="form" method="post" action="products.php?page=update&id=<?php echo $postinfo['id'] ?>" enctype="multipart/form-data" style="margin-bottom:60px">
-                      <input type="hidden" name="id" value="<?php echo $postinfo['id'] ?>">
-                      <div class="row">
-
-
-                        <div class="form-group col-md-6">
-                          <label for="device_type">seriel number</label>
-                          <input type="text"
-                                 value="<?php echo isset($postinfo['sr']) ? htmlspecialchars($postinfo['sr']) : ''; ?>"
-                                 name="sr"
-                                 id="device_type"
-                                 placeholder=""
-                                 class="form-control"
-                                 required>
-                        </div>
-
-                        <div class="form-group col-md-6">
-                          <label for="device_model">اسم الجهاز</label>
-                          <input type="text"
-                                 value="<?php echo isset($postinfo['device_name']) ? htmlspecialchars($postinfo['device_name']) : ''; ?>"
-                                 name="device_name"
-                                 id="device_model"
-                                 placeholder=""
-                                 class="form-control"
-                                 required>
-                        </div>
-
-                        <div class="form-group col-md-6">
-                          <label for="device_type">نوع الجهاز</label>
-                          <input type="text"
-                                 value="<?php echo isset($postinfo['device_type']) ? htmlspecialchars($postinfo['device_type']) : ''; ?>"
-                                 name="device_type"
-                                 id="device_type"
-                                 placeholder="نوع الجهاز"
-                                 class="form-control"
-                                 required>
-                        </div>
-
-                        <div class="form-group col-md-6">
-                          <label for="device_model">موديل الجهاز</label>
-                          <input type="text"
-                                 value="<?php echo isset($postinfo['device_model']) ? htmlspecialchars($postinfo['device_model']) : ''; ?>"
-                                 name="device_model"
-                                 id="device_model"
-                                 placeholder="موديل الجهاز"
-                                 class="form-control"
-                                 required>
-                        </div>
-
-                        <div class="form-group col-md-12">
-                          <label for="notes">ملاحظات</label>
-                          <textarea name="notes"
-                                    id="notes"
-                                    placeholder="ملاحظات"
-                                    class="form-control"><?php echo isset($postinfo['notes']) ? htmlspecialchars($postinfo['notes']) : ''; ?></textarea>
-                        </div>
-
-                        <div class="form-group col-md-6">
-                          <label for="device_image">صورة الجهاز</label>
-                          <input type="file"
-                                 name="image"
-                                 id="device_image"
-                                 class="form-control">
-                        </div>
-
-                        <div class="form-group col-md-6">
-                          <label for="employee_id">الرقم الوظيفي</label>
-                          <input type="text"
-                                 value="<?php echo isset($postinfo['employee_id']) ? htmlspecialchars($postinfo['employee_id']) : ''; ?>"
-                                 name="employee_id"
-                                 id="employee_id"
-                                 placeholder="الرقم الوظيفي"
-                                 class="form-control"
-                                 >
-                        </div>
-
-                        <div class="form-group col-md-12">
-                          <label for="department">الإدارة</label>
-                          <input type="text"
-                                 value="<?php echo isset($postinfo['department']) ? htmlspecialchars($postinfo['department']) : ''; ?>"
-                                 name="department"
-                                 id="department"
-                                 placeholder="الإدارة"
-                                 class="form-control"
-                                 >
-                        </div>
-
-                        <input type="hidden" name="id" value="<?php echo $postinfo['id'] ?>">
-
-
-
-
-                      </div>
-
-                      <input type="submit" class="btn btn-primary" name="" value="احفظ التغيرات">
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <?php
-
-      }
-      else {
-        header('location: posts.php');
-      }
-      ?>
-
-
-      <?php
-
-      include $tpl . 'footer.php';
-    }
-    elseif ($page == 'insertimage') {
-      $pageTitle = 'ادخال البيانات';
-      include 'init.php';
-
-      if ($_SERVER['REQUEST_METHOD'] == 'POST')
-      {
-
-
-        $device_type = isset($_POST['device_type']) ? $_POST['device_type'] : '';
-        $device_model = isset($_POST['device_model']) ? $_POST['device_model'] : '';
-        $notes = isset($_POST['notes']) ? $_POST['notes'] : '';
-        $employee_id = isset($_POST['employee_id']) ? $_POST['employee_id'] : '';
-        $department = isset($_POST['department']) ? $_POST['department'] : '';
-
-
-
-        $imageName = $_FILES['image']['name'];
-        $imageSize = $_FILES['image']['size'];
-        $imageTmp = $_FILES['image']['tmp_name'];
-        $imageType = $_FILES['image']['type'];
-        $id = $_POST['id'];
-
-
-
-        $imageAllowedExtension = array("jpeg", "jpg", "png");
-        $Infunc = explode('.', $imageName);
-        $imageExtension = strtolower(end($Infunc));
-
-
-
-
-        $formErrors = array();
-
-        if (empty($imageName))
-        {
-          $formErrors[] = "product image is required";
-        }
-        if (!empty($imageName) && ! in_array($imageExtension, $imageAllowedExtension))
-        {
-          $formErrors[] = 'image extension not allowed';
-        }
-
-
-                                      foreach ($formErrors as $error ) {
-                                        ?>
-                                        <div class="container" style="margin-top:50px">
-                                          <div class="row justify-content-center">
-                                              <div class="col-md-4">
-                                                <?php
-                                                  echo '<div class="alert alert-danger" style="width: 100%;text-align:center">' . $error . '</div>';
-                                                 ?>
-
-                                              </div>
-                                          </div>
-                                        </div>
-                                        <?php
-                                      }
-
-
-
-                          if (empty($formErrors))
-                            {
-                                $image = rand(0,100000) . '_' . $imageName;
-                                move_uploaded_file($imageTmp, $images . '/' . $image);
-
-
-
-
-                                $stmt = $conn->prepare("INSERT INTO images(image,book)
-
-                                 VALUES(:zca,:zsec )");
-                                $stmt->execute(array(
-                                  'zca' => $image,
-                                  'zsec' => $book
-                                ));
-                                ?>
-                                <div class="alert alert-success" style="margin-top: 15px">
-                              The product has been added successfully
-                                </div>
-                                <?php
-                                header('location:' . $_SERVER['HTTP_REFERER']);
-                              }
-
-
-
-
-      }else {
-        header('location: products.php');
-      }
-      include $tpl . 'footer.php';
-
-      ?>
-      <?php
-    }
-    elseif ($page == 'insertvideo') {
-      $pageTitle = 'ادخال البيانات';
-      include 'init.php';
-
-      if ($_SERVER['REQUEST_METHOD'] == 'POST')
-      {
-
-
-
-        $imageName = $_FILES['image']['name'];
-        $imageSize = $_FILES['image']['size'];
-        $imageTmp = $_FILES['image']['tmp_name'];
-        $imageType = $_FILES['image']['type'];
-        $book = $_POST['book'];
-
-
-
-
-
-
-
-        $formErrors = array();
-
-
-
-
-                                      foreach ($formErrors as $error ) {
-                                        ?>
-                                        <div class="container" style="margin-top:50px">
-                                          <div class="row justify-content-center">
-                                              <div class="col-md-4">
-                                                <?php
-                                                  echo '<div class="alert alert-danger" style="width: 100%;text-align:center">' . $error . '</div>';
-                                                 ?>
-
-                                              </div>
-                                          </div>
-                                        </div>
-                                        <?php
-                                      }
-
-
-
-                          if (empty($formErrors))
-                            {
-                                $image = rand(0,100000) . '_' . $imageName;
-                                move_uploaded_file($imageTmp, $images . '/' . $image);
-
-
-
-
-                                $stmt = $conn->prepare("INSERT INTO videos(video,book)
-
-                                 VALUES(:zca,:zsec )");
-                                $stmt->execute(array(
-                                  'zca' => $image,
-                                  'zsec' => $book
-                                ));
-                                ?>
-                                <div class="alert alert-success" style="margin-top: 15px">
-                              The product has been added successfully
-                                </div>
-                                <?php
-                                header('location:' . $_SERVER['HTTP_REFERER']);
-                              }
-
-
-
-
-      }else {
-        header('location: products.php');
-      }
-      include $tpl . 'footer.php';
-
-      ?>
-      <?php
-    }
-     elseif ($page == 'deleteimage') {
-       include 'init.php';
-        if ($_SESSION['type'] == 2)
-        {
-          $id = isset($_GET['id']) && is_numeric($_GET['id']) ? intval($_GET['id']) : header('location: products.php');;
-          $stmt = $conn->prepare("SELECT * FROM images WHERE id = ? LIMIT 1");
-          $stmt->execute(array($id));
-          $check = $stmt->rowCount();
-
-          if ($check > 0 )
-          {
-            $stmt = $conn->prepare("DELETE FROM images WHERE id = :zid");
-            $stmt->bindParam(":zid", $id);
-            $stmt->execute();
-            header('location: ' . $_SERVER['HTTP_REFERER']);
-
-          }
-          else {
-            header('location: ' . $_SERVER['HTTP_REFERER']);
-          }
-        }
-      }
-      elseif ($page == 'deletevideo') {
-        include 'init.php';
-         if ($_SESSION['type'] == 2)
-         {
-           $id = isset($_GET['id']) && is_numeric($_GET['id']) ? intval($_GET['id']) : header('location: products.php');;
-           $stmt = $conn->prepare("SELECT * FROM videos WHERE id = ? LIMIT 1");
-           $stmt->execute(array($id));
-           $check = $stmt->rowCount();
-
-           if ($check > 0 )
-           {
-             $stmt = $conn->prepare("DELETE FROM videos WHERE id = :zid");
-             $stmt->bindParam(":zid", $id);
-             $stmt->execute();
-             header('location: ' . $_SERVER['HTTP_REFERER']);
-
-           }
-           else {
-             header('location: ' . $_SERVER['HTTP_REFERER']);
-           }
-         }
-       }
-    elseif ($page == 'update') {
-
-
-      $pageTitle = 'صفحة تحديث المعلومات';
-      include 'init.php';
-                      $id = isset($_GET['id']) && is_numeric($_GET['id']) ? intval($_GET['id']) : header('location: products.php');;
-
-                            $stmt = $conn->prepare("SELECT * FROM products WHERE id = ? LIMIT 1");
-                            $stmt->execute(array($id));
-                            $checkpst = $stmt->rowCount();
-
-
-                            if ($checkpst > 0 )
-                            {
-
-
-                                if($_SERVER['REQUEST_METHOD'] == 'POST')
-                                {
-
-                                  $device_type = isset($_POST['device_type']) ? $_POST['device_type'] : '';
-                                  $device_model = isset($_POST['device_model']) ? $_POST['device_model'] : '';
-                                  $notes = isset($_POST['notes']) ? $_POST['notes'] : '';
-                                  $sr = isset($_POST['sr']) ? $_POST['sr'] : '';
-                                  $device_name = isset($_POST['device_name']) ? $_POST['device_name'] : '';
-                                  $employee_id = isset($_POST['employee_id']) ? $_POST['employee_id'] : '';
-                                  $department = isset($_POST['department']) ? $_POST['department'] : '';
-                                  $imageName = $_FILES['image']['name'];
-                                  $imageSize = $_FILES['image']['size'];
-                                  $imageTmp = $_FILES['image']['tmp_name'];
-                                  $imageType = $_FILES['image']['type'];
-
-
-                                  $imageAllowedExtension = array("jpeg", "jpg", "png");
-                                  $Infunc = explode('.', $imageName);
-                                  $imageExtension = strtolower(end($Infunc));
-
-
-
-                                  $formErrors = array();
-
-
-
-
-
-                                  if (!empty($imageName) && ! in_array($imageExtension, $imageAllowedExtension))
-                                  {
-                                    $formErrors[] = 'نطاق الصورة غير مسموح به';
-                                  }
-                                  if ($imageSize > 4194304)
-                                  {
-                                    $formErrors[] = 'حجم الصورة كبير';
-                                  }
-
-
-
-                                                              foreach ($formErrors as $error ) {
-                                                                ?>
-                                                                <div class="container" style="margin-top:50px">
-                                                                  <div class="row justify-content-center">
-                                                                      <div class="col-md-4">
-                                                                        <?php
-                                                                          echo '<div class="alert alert-danger" style="width: 100%;text-align:center">' . $error . '</div>';
-                                                                         ?>
-
-                                                                      </div>
-                                                                  </div>
-                                                                </div>
-                                                                <?php
-                                                              }
-
-
-
-
-                                ?>
-                                  <div class="container">
-                                    <a href="products.php?page=edit&id=<?php echo $id ?>">اضغط هنا للعودة الى الصفحة السابقة</a>
-                                  </div>
-                                <?php
-
-                                if (empty($formErrors))
-                                {
-                                  if (empty($imageName))
-                                  {
-                                    $stmt = $conn->prepare("SELECT device_image FROM products WHERE id =? LIMIT 1");
-                                    $stmt->execute(array($id));
-                                    $igg = $stmt->fetch();
-                                    $image = $igg['device_image'];
-                                  }
-                                  else {
-                                    $image = rand(0,100000) . '_' . $imageName;
-                                    move_uploaded_file($imageTmp, $images . '/' . $image);
-                                  }
-
-
-
-
-                                  $stmt = $conn->prepare("
-            UPDATE products
-            SET
-              sr= ?,
-              device_name=?,
-                device_type = ?,
-                device_model = ?,
-                notes = ?,
-                device_image = ?,
-                employee_id = ?,
-                department = ?,
-                created_at = NOW()
-            WHERE id = ?
-        ");
-
-        // Assuming $id is the ID of the device to update (should be provided)
-        $stmt->execute(array(
-            	$sr,
-              $device_name,
-            $device_type,
-            $device_model,
-            $notes,
-            $image,
-            $employee_id,
-            $department,
-            $id // The ID of the device to be updated
-        ));
-                                                                 header('location: ' . $_SERVER['HTTP_REFERER']);
-                                }
-                              }
-
-
-
-
-
-                              else {
-                                header('location: producs.php');
-                              }
-                            }
-                            else {
-                              header('location: products.php');
-                            }
-      include $tpl . 'footer.php';
-
-
-    }elseif ($page == 'delete') {
-     include 'init.php';
-      if ($_SESSION['type'] == 2)
-      {
-        $id = isset($_GET['id']) && is_numeric($_GET['id']) ? intval($_GET['id']) : header('location: products.php');;
-        $stmt = $conn->prepare("SELECT * FROM products WHERE id = ? LIMIT 1");
-        $stmt->execute(array($id));
-        $check = $stmt->rowCount();
-
-        if ($check > 0 )
-        {
-          $stmt = $conn->prepare("DELETE FROM products WHERE id = :zid");
-          $stmt->bindParam(":zid", $id);
-          $stmt->execute();
-          header('location: products.php');
-
-        }
-        else {
-          header('location: products.php');
-        }
-      }
-    }
-
-
-
-    else {
-      header('location: dashboard.php');
-    }
-
-    ?>
-
-
-    <?php
-
-
-  }else {
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+<?php
+include $tpl . 'footer.php';
+} else {
     header('location: logout.php');
-  }
-  ob_end_flush();
- ?>
+}
+ob_end_flush();
+?>
