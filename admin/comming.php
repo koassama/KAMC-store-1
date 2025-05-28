@@ -656,7 +656,7 @@ $posts = $stmt->fetchAll();
         }
     </style>
 </head>
-<body>
+<<body>
 
         <div class="add-default-page add-post-page add-product-page" id="add-page" style="margin: 120px;">
             <div class="container">
@@ -668,12 +668,19 @@ $posts = $stmt->fetchAll();
                                 <label for="serial_number">الرقم التسلسلي:</label>
                                 <input type="text" name="serial_number[]" id="serial_number" placeholder="أدخل الرقم التسلسلي للجهاز" required class="form-control">
                             </div>
+
+                            <div class="form-group">
+                                <label for="device_name">اسم الجهاز:</label>
+                                <input type="text" name="name[]" id="device_name" placeholder="أدخل اسم الجهاز" class="form-control">
+                            </div>
+
                             <div id="more-serials"></div>
-                            
+
                             <div class="form-actions">
                                 <button type="button" onclick="addSerialInput()" class="btn btn-secondary btn-small" style="width: 140px; height: 75px;">
                                     <i class="fas fa-plus"></i> إضافة رقم تسلسلي آخر
                                 </button>
+
                                 <button type="submit" class="btn btn-primary btn-large" id="ca-btn-option" style="width: 130px; height: 75px;">
                                     <i class="fas fa-check"></i> تأكيد
                                 </button>
@@ -690,6 +697,7 @@ $posts = $stmt->fetchAll();
             newField.classList.add("form-group");
             newField.innerHTML = `
                 <input type="text" name="serial_number[]" required class="form-control mt-2" placeholder="أدخل الرقم التسلسلي" >
+                <input type="text" name="name[]" class="form-control mt-2" placeholder="أدخل اسم الجهاز" >
             `;
             container.appendChild(newField);
         }
@@ -698,33 +706,38 @@ $posts = $stmt->fetchAll();
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
+
 </html>
        <?php
         include $tpl . 'footer.php';
     } elseif ($page == 'insert') {
         include 'init.php';
         if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['serial_number'])) {
-            foreach ($_POST['serial_number'] as $sr) {
-                $sr = trim($sr);
-                if ($sr === '') continue;
+            foreach ($_POST['serial_number'] as $i => $sr) {
+    $sr = trim($sr);
+    $name = isset($_POST['name'][$i]) ? trim($_POST['name'][$i]) : '';
 
-                $stmt_check = $conn->prepare("SELECT * FROM products WHERE sr = ? LIMIT 1");
-                $stmt_check->execute([$sr]);
-                $device = $stmt_check->fetch(PDO::FETCH_ASSOC);
+    if ($sr === '') continue;
 
-                $stmt_insert = $conn->prepare("INSERT INTO comming (sr, remarq, Management, name, maintenance, type, type_sa)
-                                               VALUES (?, ?, ?, ?, 0, 'الشركة', 'بالمنشأة')");
-                $stmt_insert->execute([
-                    $sr,
-                    $device['notes'] ?? '',
-                    $device['department'] ?? '',
-                    $device['device_name'] ?? ''
-                ]);
+    $stmt_check = $conn->prepare("SELECT * FROM products WHERE sr = ? LIMIT 1");
+    $stmt_check->execute([$sr]);
+    $device = $stmt_check->fetch(PDO::FETCH_ASSOC);
 
-                if ($device) {
-                    $conn->prepare("DELETE FROM products WHERE sr = ?")->execute([$sr]);
-                }
-            }
+    $stmt_insert = $conn->prepare("INSERT INTO comming (sr, remarq, Management, name, maintenance, type, type_sa)
+                                   VALUES (?, ?, ?, ?, 0, 'الشركة', 'بالمنشأة')");
+    $stmt_insert->execute([
+        $sr,
+        $device['notes'] ?? '',
+        $device['department'] ?? '',
+        !empty($name) ? $name : ($device['name[]'] ?? '')
+    ]);
+
+    if ($device) {
+        $conn->prepare("DELETE FROM products WHERE sr = ?")->execute([$sr]);
+    }
+}
+
             header("Location: comming.php?page=manage");
             exit;
         }
