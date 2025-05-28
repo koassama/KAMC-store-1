@@ -339,7 +339,7 @@ if (isset($_SESSION['admin'])) {
 }
     </style>
 </head>
-<body style="margin-right: 250px; margin-left: 20px; margin-top: 40px">
+<body style="margin-right: 250px; margin-left: 20px; margin-top: 28px">
     <div class="default-management-list users-management">
         <div class="container cnt-spc">
             <div class="row">
@@ -351,7 +351,7 @@ if (isset($_SESSION['admin'])) {
                                 <i class="fas fa-plus"></i>
                             </a>
                         </div>
-                        <form method="GET" action="users_manage.php" class="search-container">
+                        <form method="GET" action="users_manage.php" class="search-container" style="margin-top: 45px;">
     <input type="text" name="search" placeholder="ابحث بالرقم التسلسلي" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
     <button type="submit">بحث</button>
 </form>
