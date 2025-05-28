@@ -192,6 +192,53 @@ if (isset($_SESSION['admin'])) {
             background-color: #f1f5f9;
             color: #0d4f8b;
         }
+   
+.search-container {
+    margin-right: 220px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.search-container input[type="text"] {
+    border: 2px solid #d1d5db;
+    border-radius: 999px;
+    padding: 8px 20px;
+    font-size: 15px;
+    outline: none;
+    transition: border 0.3s ease;
+    width: 240px;
+}
+
+.search-container input[type="text"]::placeholder {
+    color: #6b7280;
+    font-weight: 400;
+}
+
+.search-container input[type="text"]:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+}
+
+.search-container button {
+    background: linear-gradient(to left, #1e40af, #0d4f8b);
+    color: white;
+    padding: 8px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.search-container button:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(to left, #3b82f6, #1e40af);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
 
         /* Responsive Design */
         @media (max-width: 768px) {
@@ -218,18 +265,20 @@ if (isset($_SESSION['admin'])) {
         <div class="container-fluid cnt-spc">
             <div class="row">
                 <div class="col-md-6">
-                    <div class="right-header management-header">
-                        <div class="btns">
-                            <a href="add.php" class="add-btn"> <i class="fas fa-plus"></i> </a>
-                            <div class="col-md-6 d-flex justify-content-end align-items-center mb-3">
-                                <form method="GET" action="consumers.php" class="d-flex w-100" style="max-width: 300px;">
-                                    <input type="text" name="search" class="form-control form-control-sm me-2" placeholder="ابحث بالرقم التسلسلي" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
-                                    <button type="submit" class="btn btn-primary btn-sm">بحث</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+  <div class="right-header management-header" style="margin-right: 180px">
+    <div class="btns">
+      <a href="add.php" class="add-btn"><i class="fas fa-plus"></i></a>
+      <div class="col-md-6 d-flex justify-content-end align-items-center mb-3">
+        <form method="GET" action="consumers.php" class="search-container">
+          <input type="text" name="search" placeholder="ابحث بالرقم التسلسلي"
+            value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>">
+          <button type="submit">بحث</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
                 <div class="col-md-6">
                     <div class="left-header management-header">
                         <h1>قائمة الاجهزة المستهلكة</h1>
