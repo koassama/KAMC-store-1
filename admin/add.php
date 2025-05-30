@@ -156,7 +156,7 @@ if (isset($_SESSION['admin'])) {
         </style>
     </head>
 
-    <body>
+    <body style="margin-top: 40px">
         <div class="add-default-page add-post-page add-product-page" id="add-page">
             <div class="container">
                 <div class="row justify-content-center">
