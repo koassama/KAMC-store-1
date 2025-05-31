@@ -42,13 +42,14 @@ $posts = $stmt->fetchAll();
 
                   <div class="col-md-6">
                     <div class="right-header management-header">
-                      <form method="GET" action="reports.php" class="d-flex justify-content-end align-items-center mb-2" style="max-width: 300px;">
+                        <a href="products.php?page=add" id="open-add-page" class="add-btn"><i class="fas fa-plus"></i></a>
+                      <form method="GET" action="reports.php" class="d-flex justify-content-end align-items-center mb-2" style="max-width: 220px;margin-top:80px;">
     <input type="hidden" name="page" value="manage">
     <input type="text" name="search" class="form-control form-control-sm" placeholder="ابحث باسم نوع الجهاز" value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>">
-    <button type="submit" class="btn btn-primary btn-sm mx-2">بحث</button>
+    <button type="submit" class="btn btn-primary btn-sm mx-2" >بحث</button>
 </form>
                       <div class="btns">
-                        <a href="reports.php?page=add" class="add-btn"> <i class="fas fa-plus"></i> </a>
+                        
                       </div>
                     </div>
                   </div>
@@ -57,14 +58,12 @@ $posts = $stmt->fetchAll();
                       <h1>قائمة التقارير</h1>
                       <p class="tt">اجمالي <?php echo Total_rep($conn, 'reports ', "status = 0") ?> </p>
                     </div>
-                  </div>
-                  <div class="col-md-6 srch-sp">
-                    <div class="search-box">
-                      <input type="search" class="form-control" name="search" id="categories-search" onkeyup="tabletwo()" autocomplete="off" placeholder="البحث عن طريق مصدر الجهاز او نوع العقد">
                     </div>
-                    <a href="download.php" class="btn btn-success">EXPORT TO EXCEL</a>
-                  </div>
-                  
+                 <div class="left-align-btn">
+  <a href="download.php" class="excel-btn" style="transform: translateX(-550px);">EXPORT TO EXCEL</a>
+
+</div>
+
 
 <div class="col-md-12">
   <div class="management-body">
@@ -102,23 +101,35 @@ $posts = $stmt->fetchAll();
                     <?php
 
 ?>
-<ul class="list-group">
-<li class="list-group-item">
-<a href="reports.php?page=edit&id=<?php echo $post['id']; ?>" class="text-warning">
-  <i class="fas fa-edit"></i> تعديل
-</a>
-</li>
-<li class="list-group-item">
-<a href="reports.php?page=delete&id=<?php echo $post['id']; ?>" class="text-danger" onclick="return confirm('هل تريد الحذف؟');">
-  <i class="fas fa-trash"></i> حذف
-</a>
-</li>
-<li class="list-group-item">
-<a href="reports.php?page=print&id=<?php echo $post['id']; ?>">
-  <i class="fas fa-print"></i> طباعة
-</a>
-</li>
+
+<ul class="list-group list-group-horizontal">
+  <li class="list-group-item p-0 border-0">
+    <a href="reports.php?page=edit&id=<?= $row['id'] ?>" 
+       class="btn btn-warning btn-sm text-white mx-1" 
+       style="width: 100px; height: 35px; border-radius: 8px;">
+      <i class="fas fa-edit text-white"></i> تعديل
+    </a>
+  </li>
+
+  <li class="list-group-item p-0 border-0">
+    <a href="reports.php?page=delete&id=<?= $row['id'] ?>" 
+       class="btn btn-danger btn-sm text-white mx-1" 
+       style="width: 100px; height: 35px; border-radius: 8px;"
+       onclick="return confirm('هل أنت متأكد من الحذف؟')">
+      <i class="fas fa-trash text-white"></i> حذف
+    </a>
+  </li>
+
+  <li class="list-group-item p-0 border-0">
+    <a href="download_word.php?id=<?= $row['id'] ?>" 
+       class="btn btn-primary btn-sm text-white mx-1" 
+       style="width: 100px; height: 35px; border-radius: 8px;" 
+       target="_blank">
+      <i class="fas fa-print text-white"></i> طباعة
+    </a>
+  </li>
 </ul>
+
 <?php
 
     ?>
@@ -802,3 +813,168 @@ $conn->exec($sql_update_device_source);
   }
   ob_end_flush();
  ?>
+   <!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= $pageTitle ?></title>
+
+    <!-- روابط التنسيقات (نفس اللي بالصيانة) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Almarai', sans-serif;
+            background-color: #f1f4f8;
+            direction: rtl;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container-fluid {
+            padding: 30px;
+        }
+
+        .cnt-spc {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin-top: 20px;
+        }
+
+        .management-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0;
+        }
+
+        .management-header .tt {
+            color: #64748b;
+            font-size: 16px;
+            margin-top: 5px;
+        }
+
+        .default-management-table {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            margin-top: 20px;
+        }
+
+        .table thead th {
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            border: none;
+            padding: 20px 15px;
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 14px;
+            border-radius: 12px;
+        }
+
+        .table tbody td {
+            padding: 18px 15px;
+            border-top: 1px solid #f1f5f9;
+            vertical-align: middle;
+            color: #374151;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f8fafc;
+            transform: scale(1.01);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+       .green-btn {
+  background-color: #28a745;
+  color: white;
+  border-radius: 25px;
+  padding: 10px 25px;
+  font-weight: bold;
+  font-size: 16px;
+  border: none;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+
+
+
+
+.rounded-search:focus {
+  border-radius: 12px;
+  border-color: #007bff;
+}
+
+     
+
+    .green-btn:hover {
+      background-color: #218838;
+    }
+
+    .rounded-search {
+      border-radius: 40px;
+      border: 1px solid #ccc;
+
+      padding: 8px 18px;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+
+    .rounded-search:focus {
+      border-radius: 12px;
+      border-color: #007bff;
+    }
+    .btn-primary {
+                    background: linear-gradient(135deg,rgb(59, 109, 147), #1e40af);
+                    color: white;
+                    border-radius: 19px;
+                }
+                .form-control-sm {
+                   border-radius: 12px;
+                       height: calc(1.5em + .5rem + 2px);
+                }
+                .right-header .add-btn {
+  background-color:#1e40af; 
+  color: white;
+  
+  
+ 
+}
+    .left-align-btn {
+  text-align: left;
+  border-radius: 100px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.excel-btn {
+  background: linear-gradient(135deg,rgb(40, 167, 46),rgb(154, 228, 175));
+  color: white;
+  padding: 12px 30px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.excel-btn:hover {
+  background-color:rgb(250, 250, 243);
+  color: white;
+  text-decoration: none;
+
+}           
+  </style>
+</head>
+<body style="margin-right: 250px; margin-left: 20px;">
+       
