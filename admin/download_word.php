@@ -30,16 +30,27 @@ try {
         die("لا يوجد سجل بهذا المعرّف");
     }
 
-    // تجهيز معالج القالب باستخدام ملف template.docx (تأكد من وجود الملف في المسار الصحيح)
+    // تجهيز معالج القالب باستخدام ملف template.docx
     $templateProcessor = new TemplateProcessor('../template.docx');
 
     // ملء القالب بالقيم المأخوذة من قاعدة البيانات
-    $templateProcessor->setValue('sr', $row['sr']);
-    $templateProcessor->setValue('name', $row['name']);
-    $templateProcessor->setValue('custody', $row['custody']);
+    $templateProcessor->setValue('sr', $row['sr'] ?? '');
+    $templateProcessor->setValue('name', $row['name'] ?? '');
+    $templateProcessor->setValue('custody', $row['custody'] ?? '');
+    $templateProcessor->setValue('remarq', $row['remarq'] ?? ''); // ADD THIS LINE - المفقود
+
+    // إضافة المزيد من الحقول إذا كانت موجودة في القالب
+    $templateProcessor->setValue('Management', $row['Management'] ?? '');
+    $templateProcessor->setValue('type', $row['type'] ?? '');
+    $templateProcessor->setValue('type_sa', $row['type_sa'] ?? '');
+    $templateProcessor->setValue('maintenance', $row['maintenance'] ?? '0');
+    
+    // إضافة التاريخ الحالي
+    $templateProcessor->setValue('date', date('Y-m-d'));
+    $templateProcessor->setValue('time', date('H:i:s'));
 
     // حفظ الملف الناتج مؤقتاً
-    $fileName = "result_{$id}.docx";
+    $fileName = "device_transfer_{$id}_" .".docx";
     $templateProcessor->saveAs($fileName);
 
     // تهيئة الرؤوس لإرسال الملف للتنزيل
@@ -50,12 +61,20 @@ try {
     header("Cache-Control: must-revalidate");
     header("Pragma: public");
     header("Content-Length: " . filesize($fileName));
+    
+    // تنظيف أي إخراج سابق
+    ob_clean();
+    flush();
+    
     readfile($fileName);
 
     // حذف الملف المؤقت بعد الإرسال
     unlink($fileName);
     exit;
+    
 } catch (PDOException $e) {
-    echo "خطأ في قاعدة البيانات: " . $e->getMessage();
+    die("خطأ في قاعدة البيانات: " . $e->getMessage());
+} catch (Exception $e) {
+    die("خطأ في معالجة الملف: " . $e->getMessage());
 }
 ?>
