@@ -463,7 +463,7 @@ $posts = $stmt->fetchAll();
                             <!-- optional search field -->
                         </div>
                     </div>
-                    <a href="comming.php?page=restore" class="restore-btn"> استرجاع الجهاز من الصيانة </a>
+                    <a href="restore.php" class="restore-btn"> استرجاع الجهاز من الصيانة </a>
                     <div class="col-md-12">
                         <div class="management-body">
                             <div class="default-management-table table-responsive">
@@ -493,9 +493,10 @@ $posts = $stmt->fetchAll();
         <a href="download_word.php?id=<?php echo $post['id']; ?>" class="btn btn-sm btn-primary">
             <i class="fas fa-download"></i> تحميل ملف word
         </a>
-        <a href="comming.php?page=edit&id=<?php echo $post['id']; ?>" class="btn btn-sm btn-warning">
-            <i class="fas fa-edit"></i> تعديل
-        </a>
+       <!-- Replace the existing edit button in comming.php with this: -->
+<a href="edit_comming.php?page=edit&id=<?php echo $post['id']; ?>" class="btn btn-sm btn-warning">
+    <i class="fas fa-edit"></i> تعديل
+</a>
         <a href="comming.php?page=delete&id=<?php echo $post['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('هل تريد الحذف؟');">
             <i class="fas fa-trash"></i> حذف
         </a>
@@ -528,7 +529,7 @@ $posts = $stmt->fetchAll();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $pageTitle; ?></title>
+    <title>إضافة الأجهزة</title>
     
     <!-- Bootstrap & Font Awesome -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
@@ -600,7 +601,6 @@ $posts = $stmt->fetchAll();
             transition: all 0.3s ease;
             border: none;
             margin: 5px;
-            width: 20px;
         }
 
         .btn-primary {
@@ -611,12 +611,19 @@ $posts = $stmt->fetchAll();
         .btn-secondary {
             background: #6b7280;
             color: white;
-            width: 20px;
         }
 
         .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+            gap: 15px;
         }
 
         #more-serials .form-group {
@@ -634,6 +641,30 @@ $posts = $stmt->fetchAll();
             }
         }
 
+        .device-entry {
+            border: 2px solid #e5e7eb;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: #f8fafc;
+        }
+
+        .device-entry h5 {
+            color: #1e293b;
+            font-weight: 600;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #0d4f8b;
+            padding-bottom: 5px;
+        }
+
+        .row {
+            margin: 0;
+        }
+
+        .col-md-6 {
+            padding: 0 10px;
+        }
+
         @media (max-width: 768px) {
             .add-form {
                 padding: 25px;
@@ -645,98 +676,181 @@ $posts = $stmt->fetchAll();
                 gap: 10px;
             }
 
-            .btn-large {
+            .btn {
                 width: 100%;
                 min-width: auto;
             }
 
-            .btn-small {
-                width: 100%;
+            .col-md-6 {
+                padding: 0 5px;
             }
         }
     </style>
 </head>
-<<body>
+<body>
 
-        <div class="add-default-page add-post-page add-product-page" id="add-page" style="margin: 120px;">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-md-8">
-                        <form class="add-form" method="POST" action="comming.php?page=insert" id="ca-form-info"  >
-                            <h3>قم بملء المعلومات لإضافة الجهاز</h3>
-                            <div class="form-group">
-                                <label for="serial_number">الرقم التسلسلي:</label>
-                                <input type="text" name="serial_number[]" id="serial_number" placeholder="أدخل الرقم التسلسلي للجهاز" required class="form-control">
+<div class="add-default-page add-post-page add-product-page" id="add-page" style="margin: 50px;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <form class="add-form" method="POST" action="comming.php?page=insert" id="ca-form-info">
+                    <h3>قم بملء المعلومات لإضافة الأجهزة</h3>
+                    
+                    <!-- الجهاز الأول -->
+                    <div class="device-entry">
+                        <h5><i class="fas fa-desktop"></i> الجهاز الأول</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="serial_number">أدخل الرقم التسلسلي الخاص في وزارة الصحة:</label>
+                                    <input type="text" name="serial_number[]" id="serial_number" 
+                                           placeholder="أدخل الرقم التسلسلي الخاص في وزارة الصحة" required class="form-control">
+                                </div>
                             </div>
-
-                            <div class="form-group">
-                                <label for="device_name">اسم الجهاز:</label>
-                                <input type="text" name="name[]" id="device_name" placeholder="أدخل اسم الجهاز" class="form-control">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="device_name">نوع الجهاز:</label>
+                                    <input type="text" name="name[]" id="device_name" 
+                                           placeholder="أدخل نوع الجهاز" class="form-control">
+                                </div>
                             </div>
-
-                            <div id="more-serials"></div>
-
-                            <div class="form-actions">
-                                <button type="button" onclick="addSerialInput()" class="btn btn-secondary btn-small" style="width: 140px; height: 75px;">
-                                    <i class="fas fa-plus"></i> إضافة رقم تسلسلي آخر
-                                </button>
-
-                                <button type="submit" class="btn btn-primary btn-large" id="ca-btn-option" style="width: 130px; height: 75px;">
-                                    <i class="fas fa-check"></i> تأكيد
-                                </button>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="custody">أدخل الرقم التسلسلي الخاص في الجهاز:</label>
+                                    <input type="text" name="custody[]" id="custody" 
+                                           placeholder="أدخل الرقم التسلسلي الخاص في الجهاز" class="form-control">
+                                </div>
                             </div>
-                        </form>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="remarq">اسم الجهاز:</label>
+                                    <input type="text" name="remarq[]" id="remarq" 
+                                           placeholder="أدخل اسم الجهاز" class="form-control">
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
+
+                    <div id="more-serials"></div>
+
+                    <div class="form-actions">
+                        <button type="button" onclick="addSerialInput()" class="btn btn-secondary btn-small" 
+                                style="width: 140px; height: 75px;">
+                            <i class="fas fa-plus"></i> إضافة جهاز آخر
+                        </button>
+
+                        <button type="submit" class="btn btn-primary btn-large" id="ca-btn-option" 
+                                style="width: 130px; height: 75px;">
+                            <i class="fas fa-check"></i> تأكيد
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
-        <script>
-        function addSerialInput() {
-            const container = document.getElementById("more-serials");
-            const newField = document.createElement("div");
-            newField.classList.add("form-group");
-            newField.innerHTML = `
-                <input type="text" name="serial_number[]" required class="form-control mt-2" placeholder="أدخل الرقم التسلسلي" >
-                <input type="text" name="name[]" class="form-control mt-2" placeholder="أدخل اسم الجهاز" >
-            `;
-            container.appendChild(newField);
-        }
-        </script>
+    </div>
+</div>
 
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+let deviceCounter = 1;
+
+function addSerialInput() {
+    deviceCounter++;
+    const container = document.getElementById("more-serials");
+    const newField = document.createElement("div");
+    newField.classList.add("device-entry");
+    newField.innerHTML = `
+        <h5><i class="fas fa-desktop"></i> الجهاز الأول</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="serial_number">أدخل الرقم التسلسلي الخاص في وزارة الصحة:</label>
+                                    <input type="text" name="serial_number[]" id="serial_number" 
+                                           placeholder="أدخل الرقم التسلسلي الخاص في وزارة الصحة" required class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="device_name">نوع الجهاز:</label>
+                                    <input type="text" name="name[]" id="device_name" 
+                                           placeholder="أدخل نوع الجهاز" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="custody">أدخل الرقم التسلسلي الخاص في الجهاز:</label>
+                                    <input type="text" name="custody[]" id="custody" 
+                                           placeholder="أدخل الرقم التسلسلي الخاص في الجهاز" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="remarq">اسم الجهاز:</label>
+                                    <input type="text" name="remarq[]" id="remarq" 
+                                           placeholder="أدخل اسم الجهاز" class="form-control">
+                                </div>
+                            </div>
+                        </div></div>
+        <button type="button" onclick="removeDevice(this)" class="btn btn-danger btn-sm" style="float: left;">
+            <i class="fas fa-trash"></i> حذف هذا الجهاز
+        </button>
+        <div style="clear: both;"></div>
+    `;
+    container.appendChild(newField);
+}
+
+function removeDevice(button) {
+    button.closest('.device-entry').remove();
+}
+
+function getArabicNumber(num) {
+    const arabicNumbers = ['', 'الأول', 'الثاني', 'الثالث', 'الرابع', 'الخامس', 'السادس', 'السابع', 'الثامن', 'التاسع', 'العاشر'];
+    return arabicNumbers[num] || `رقم ${num}`;
+}
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
-
 </html>
-       <?php
+
+      <?php
         include $tpl . 'footer.php';
     } elseif ($page == 'insert') {
         include 'init.php';
         if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['serial_number'])) {
             foreach ($_POST['serial_number'] as $i => $sr) {
-    $sr = trim($sr);
-    $name = isset($_POST['name'][$i]) ? trim($_POST['name'][$i]) : '';
+                $sr = trim($sr);
+                $name = isset($_POST['name'][$i]) ? trim($_POST['name'][$i]) : '';
+                $custody = isset($_POST['custody'][$i]) ? trim($_POST['custody'][$i]) : '';
+                $remarq = isset($_POST['remarq'][$i]) ? trim($_POST['remarq'][$i]) : '';
 
-    if ($sr === '') continue;
+                if ($sr === '') continue;
 
-    $stmt_check = $conn->prepare("SELECT * FROM products WHERE sr = ? LIMIT 1");
-    $stmt_check->execute([$sr]);
-    $device = $stmt_check->fetch(PDO::FETCH_ASSOC);
+                $stmt_check = $conn->prepare("SELECT * FROM products WHERE sr = ? LIMIT 1");
+                $stmt_check->execute([$sr]);
+                $device = $stmt_check->fetch(PDO::FETCH_ASSOC);
 
-    $stmt_insert = $conn->prepare("INSERT INTO comming (sr, remarq, Management, name, maintenance, type, type_sa)
-                                   VALUES (?, ?, ?, ?, 0, 'الشركة', 'بالمنشأة')");
-    $stmt_insert->execute([
-        $sr,
-        $device['notes'] ?? '',
-        $device['department'] ?? '',
-        !empty($name) ? $name : ($device['name[]'] ?? '')
-    ]);
+                // Use form remarq if provided, otherwise use device notes
+                $finalRemarq = !empty($remarq) ? $remarq : (isset($device['notes']) ? $device['notes'] : '');
 
-    if ($device) {
-        $conn->prepare("DELETE FROM products WHERE sr = ?")->execute([$sr]);
-    }
-}
+                $stmt_insert = $conn->prepare("INSERT INTO comming (sr, remarq, Management, name, custody, maintenance, type, type_sa)
+                                               VALUES (?, ?, ?, ?, ?, 0, 'الشركة', 'بالمنشأة')");
+                $stmt_insert->execute([
+                    $sr,
+                    $finalRemarq,
+                    isset($device['department']) ? $device['department'] : '',
+                    !empty($name) ? $name : (isset($device['name']) ? $device['name'] : ''),
+                    $custody
+                ]);
+
+                if ($device) {
+                    $conn->prepare("DELETE FROM products WHERE sr = ?")->execute([$sr]);
+                }
+            }
 
             header("Location: comming.php?page=manage");
             exit;
