@@ -1,3 +1,4 @@
+
 <?php
   ob_start();
   session_start();
@@ -42,7 +43,9 @@ $posts = $stmt->fetchAll();
 
                   <div class="col-md-6">
                     <div class="right-header management-header">
-                        <a href="products.php?page=add" id="open-add-page" class="add-btn"><i class="fas fa-plus"></i></a>
+                       <div class="btns">
+                        <a href="reports.php?page=add" class="add-btn"> <i class="fas fa-plus"></i> </a>
+                      </div>
                       <form method="GET" action="reports.php" class="d-flex justify-content-end align-items-center mb-2" style="max-width: 220px;margin-top:80px;">
     <input type="hidden" name="page" value="manage">
     <input type="text" name="search" class="form-control form-control-sm" placeholder="ابحث باسم نوع الجهاز" value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>">
@@ -104,7 +107,7 @@ $posts = $stmt->fetchAll();
 
 <ul class="list-group list-group-horizontal">
   <li class="list-group-item p-0 border-0">
-    <a href="reports.php?page=edit&id=<?= $row['id'] ?>" 
+   <a href="reports.php?page=edit&id=<?= $post['id'] ?>"
        class="btn btn-warning btn-sm text-white mx-1" 
        style="width: 100px; height: 35px; border-radius: 8px;">
       <i class="fas fa-edit text-white"></i> تعديل
@@ -112,7 +115,7 @@ $posts = $stmt->fetchAll();
   </li>
 
   <li class="list-group-item p-0 border-0">
-    <a href="reports.php?page=delete&id=<?= $row['id'] ?>" 
+   <a href="reports.php?page=delete&id=<?= $post['id'] ?>"
        class="btn btn-danger btn-sm text-white mx-1" 
        style="width: 100px; height: 35px; border-radius: 8px;"
        onclick="return confirm('هل أنت متأكد من الحذف؟')">
@@ -121,7 +124,7 @@ $posts = $stmt->fetchAll();
   </li>
 
   <li class="list-group-item p-0 border-0">
-    <a href="download_word.php?id=<?= $row['id'] ?>" 
+    <a href="reports.php?page=print&id=<?php echo $post['id']; ?>"
        class="btn btn-primary btn-sm text-white mx-1" 
        style="width: 100px; height: 35px; border-radius: 8px;" 
        target="_blank">
