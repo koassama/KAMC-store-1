@@ -246,6 +246,7 @@ if (isset($_SESSION['admin'])) {
     border-color: #0d4f8b;
     box-shadow: 0 0 0 3px rgba(13, 79, 139, 0.1);
     outline: none;
+    
 }
 
 .form-control-sm {
@@ -255,12 +256,15 @@ if (isset($_SESSION['admin'])) {
 /* Search Button Styles */
 .btn-serach {
     width: 120px;
+     border-radius: 19px;
+     
 }
 
 .btn-primary {
     background: linear-gradient(135deg, #0d4f8b, #1e40af);
     border: none;
     color: white;
+     border-radius: 19px;
 }
 
 .btn-primary:hover {
@@ -279,11 +283,14 @@ if (isset($_SESSION['admin'])) {
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    
 }
 
 .btn-sm {
-    padding: 8px 16px;
+       padding: .25rem .5rem;
     font-size: 14px;
+    border-radius: 19px;
+    
 }
 
 .btn:hover {
@@ -294,6 +301,7 @@ if (isset($_SESSION['admin'])) {
 /* Search Form Container */
 .d-flex {
     display: flex;
+    
 }
 
 .justify-content-end {
@@ -302,15 +310,12 @@ if (isset($_SESSION['admin'])) {
 
 .align-items-center {
     align-items: center;
-}
 
-.mb-2 {
-    margin-bottom: 0.5rem;
 }
 
 .mx-2 {
-    margin-left: 0.5rem;
-    margin-right: 0.5rem;
+    
+     border-radius: 19px;
 }
 
 .search-container {
@@ -318,6 +323,8 @@ if (isset($_SESSION['admin'])) {
     gap: 10px;
     align-items: center;
     margin-top: 10px;
+    border-radius: 19px;
+    
 }
 
 .search-container input[type="text"] {
@@ -328,6 +335,7 @@ if (isset($_SESSION['admin'])) {
     outline: none;
     transition: border 0.3s ease;
     width: 240px;
+    
 }
 
 .search-container input[type="text"]::placeholder {
@@ -356,6 +364,7 @@ if (isset($_SESSION['admin'])) {
     transform: translateY(-1px);
     background: linear-gradient(to left, #3b82f6, #1e40af);
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    
 }
 
 
@@ -364,16 +373,18 @@ if (isset($_SESSION['admin'])) {
     .btn-serach {
         width: 100px;
         font-size: 12px;
+        border-radius: 19px;
     }
     
     .form-control {
         font-size: 14px;
         padding: 10px 12px;
+        
     }
 }
     </style>
 </head>
-<body style="margin-right: 250px; margin-left: 20px; margin-top: 28px">
+<body style="margin-right: 250px; margin-left: 20px; margin-top: 40px">
     <div class="default-management-list users-management">
         <div class="container cnt-spc">
             <div class="row">
@@ -384,11 +395,14 @@ if (isset($_SESSION['admin'])) {
                             <a href="users_add.php" id="open-add-page" class="add-btn">
                                 <i class="fas fa-plus"></i>
                             </a>
-                        </div>
-                        <form method="GET" action="users_manage.php" class="search-container" style="margin-top: 45px;">
-    <input type="text" name="search" placeholder="ابحث بالرقم التسلسلي" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
-    <button type="submit">بحث</button>
+                        </div> 
+                        
+                         <form method="GET" action="reports.php" class="d-flex justify-content-end align-items-center mb-2" style="max-width: 260px;margin-top:1px;">
+    <input type="hidden" name="page" value="manage">
+    <input type="text" name="search" class="form-control form-control-sm"style="max-width: 240px;margin-top:80px;" placeholder="ابحث بالرقم التسلسلي " value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>">
+    <button type="submit" class="btn btn-primary btn-sm mx-2" style="max-width: 220px;margin-top:80px;">بحث</button>
 </form>
+
 
                         <?php endif; ?>
                     </div>
@@ -454,13 +468,27 @@ if (isset($_SESSION['admin'])) {
                                         </td>
                                         <td>
                                             <?php if ($_SESSION['type'] == 2): ?>
-                                            <div class="dropdown">
-                                                <a class="btn btn-sm btn-warning me-1" href="users_edit.php?id=<?php echo $user['id']; ?>">
-  <i class="fas fa-edit"></i> تعديل
-</a>
-<a class="btn btn-sm btn-danger" href="users_delete.php?id=<?php echo $user['id']; ?>" onclick="return confirm('هل أنت متأكد من الحذف؟')">
-  <i class="fas fa-trash"></i> حذف
-</a>
+                                           
+<ul class="list-group list-group-horizontal">
+  <li class="list-group-item p-0 border-0">
+    <a href="reports.php?page=edit&id=<?= $row['id'] ?>" 
+       class="btn btn-warning btn-sm text-white mx-1" 
+       style="width: 100px; height: 35px; border-radius: 8px;">
+      <i class="fas fa-edit text-white"></i> تعديل
+    </a>
+  </li>
+
+  <li class="list-group-item p-0 border-0">
+    <a href="reports.php?page=delete&id=<?= $row['id'] ?>" 
+       class="btn btn-danger btn-sm text-white mx-1" 
+       style="width: 100px; height: 35px; border-radius: 8px;"
+       onclick="return confirm('هل أنت متأكد من الحذف؟')">
+      <i class="fas fa-trash text-white"></i> حذف
+    </a>
+  </li>
+
+  
+</ul>
 
                                             </div>
                                             <?php elseif ($_SESSION['id'] == $user['id']): ?>
