@@ -185,6 +185,7 @@
             gap: 10px;
             align-items: center;
             margin-top: 10px;
+             border-radius: 19px;
         }
 
         .search-container input[type="text"] {
@@ -224,7 +225,19 @@
             background: linear-gradient(to left, #3b82f6, #1e40af);
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
+         .btn-primary {
+            background: linear-gradient(135deg, #0d4f8b, #1e40af);
+            border: none;
+            color: white;
+            border-radius: 19px;
+            
+        }
 
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(13, 79, 139, 0.3);
+        }
         /* Responsive Design */
         @media (max-width: 768px) {
             .container-fluid {
@@ -269,6 +282,20 @@
                 font-size: 12px;
                 padding: 6px 12px;
             }
+            .form-control {
+    display: block;
+    width: 100%;
+    height: calc(1.5em + .75rem + 2px);
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 12px;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;}
         }
     </style>
 </head>
@@ -281,10 +308,10 @@
                 <div class="right-header management-header">
                     <div class="btns">
                         <a href="returns.php?page=add" class="add-btn"> <i class="fas fa-plus"></i> </a>
-                        <form method="GET" action="returns.php" class="search-container">
-                            <input type="hidden" name="page" value="manage">
-                            <input type="text" name="search" placeholder="ابحث برقم الجهاز" value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>">
-                            <button type="submit">بحث</button>
+                        <form method="GET" action="reports.php" class="d-flex justify-content-end align-items-center mb-2" style="max-width: 220px;margin-top:70px;">
+    <input type="hidden" name="page" value="manage">
+    <input type="text" name="search" class="form-control form-control-sm"style="border-radius: 12px"; placeholder="ابحث برقم الجهاز" value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>">
+    <button type="submit" class="btn btn-primary btn-sm mx-2" >بحث</button>
                         </form>
                     </div>
                 </div>
@@ -346,17 +373,25 @@
                                         <p class="f-n"><?php echo $post['created_at']; ?></p>
                                     </td>
                                     <td>
-                                        <div class="action-buttons">
-                                            <a href="returns.php?page=edit&id=<?php echo $post['id']; ?>" 
-                                               class="action-btn edit-btn">
-                                                <i class="fas fa-edit"></i> تعديل
-                                            </a>
-                                            <a href="returns.php?page=delete&id=<?php echo $post['id']; ?>" 
-                                               class="action-btn delete-btn" 
-                                               onclick="return confirm('هل تريد الحذف؟');">
-                                                <i class="fas fa-trash"></i> حذف
-                                            </a>
-                                        </div>
+                                        <ul class="list-group list-group-horizontal">
+  <li class="list-group-item p-0 border-0">
+    <a href="reports.php?page=edit&id=<?= $row['id'] ?>" 
+       class="btn btn-warning btn-sm text-white mx-1" 
+       style="width: 100px; height: 35px; border-radius: 8px;">
+      <i class="fas fa-edit text-white"></i> تعديل
+    </a>
+  </li>
+
+  <li class="list-group-item p-0 border-0">
+    <a href="reports.php?page=delete&id=<?= $row['id'] ?>" 
+       class="btn btn-danger btn-sm text-white mx-1" 
+       style="width: 100px; height: 35px; border-radius: 8px;"
+       onclick="return confirm('هل أنت متأكد من الحذف؟')">
+      <i class="fas fa-trash text-white"></i> حذف
+    </a>
+  </li>
+
+</ul>
                                     </td>
                                 </tr>
                                 <?php
