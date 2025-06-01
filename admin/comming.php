@@ -326,6 +326,8 @@ $posts = $stmt->fetchAll();
         .btn-primary {
             background: linear-gradient(135deg, #0d4f8b, #1e40af);
             color: white;
+            border-radius: 19px;
+
         }
 
         .btn-secondary {
