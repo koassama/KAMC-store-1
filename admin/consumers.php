@@ -199,6 +199,7 @@ if (isset($_SESSION['admin'])) {
     gap: 10px;
     align-items: center;
     margin-top: 10px;
+    border-radius: 19px;
 }
 
 .search-container input[type="text"] {
@@ -209,16 +210,23 @@ if (isset($_SESSION['admin'])) {
     outline: none;
     transition: border 0.3s ease;
     width: 240px;
+    border-radius: 19px;
 }
 
 .search-container input[type="text"]::placeholder {
     color: #6b7280;
     font-weight: 400;
+    border-radius: 19px;
 }
 
 .search-container input[type="text"]:focus {
     border-color: #2563eb;
     box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+    
+}
+
+.btn-sm {
+     border-radius: 19px;
 }
 
 .search-container button {
@@ -257,6 +265,7 @@ if (isset($_SESSION['admin'])) {
             .table-responsive {
                 border-radius: 15px;
             }
+            
         }
     </style>
 </head>
@@ -265,14 +274,15 @@ if (isset($_SESSION['admin'])) {
         <div class="container-fluid cnt-spc">
             <div class="row">
                 <div class="col-md-6">
-  <div class="right-header management-header" style="margin-right: 180px">
+  <div class="right-header management-header" >
     <div class="btns">
       <a href="add.php" class="add-btn"><i class="fas fa-plus"></i></a>
       <div class="col-md-6 d-flex justify-content-end align-items-center mb-3">
-        <form method="GET" action="consumers.php" class="search-container">
-          <input type="text" name="search" placeholder="ابحث بالرقم التسلسلي"
-            value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>">
-          <button type="submit">بحث</button>
+     
+   <form method="GET" action="reports.php" class="d-flex justify-content-end align-items-center mb-2" style="max-width: 250px;margin-top:80px;">
+    <input type="hidden" name="page" value="manage">
+    <input type="text" name="search" class="form-control form-control-sm" placeholder="ابحث بالرقم التسلسلي" value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>">
+    <button type="submit" class="btn btn-primary btn-sm mx-2" >بحث</button>
         </form>
       </div>
     </div>
@@ -318,17 +328,24 @@ if (isset($_SESSION['admin'])) {
                                             <?php echo htmlspecialchars($post['sr']); ?>
                                         </td>
                                         <td>
-                                           <ul class="list-group d-flex flex-row gap-2">
-    <li class="list-group-item p-0 border-0">
-        <a class="btn btn-sm btn-warning" href="edit.php?id=<?php echo $post['id']; ?>">
-            <i class="fas fa-edit"></i> تعديل
-        </a>
-    </li>
-    <li class="list-group-item p-0 border-0">
-        <a class="btn btn-sm btn-danger" href="delete.php?id=<?php echo $post['id']; ?>" onclick="return confirm('هل أنت متأكد من الحذف؟')">
-            <i class="fas fa-trash"></i> حذف
-        </a>
-    </li>
+                                         <ul class="list-group list-group-horizontal">
+  <li class="list-group-item p-0 border-0">
+    <a href="reports.php?page=edit&id=<?= $row['id'] ?>" 
+       class="btn btn-warning btn-sm text-white mx-1" 
+       style="width: 100px; height: 35px; border-radius: 8px;">
+      <i class="fas fa-edit text-white"></i> تعديل
+    </a>
+  </li>
+
+  <li class="list-group-item p-0 border-0">
+    <a href="reports.php?page=delete&id=<?= $row['id'] ?>" 
+       class="btn btn-danger btn-sm text-white mx-1" 
+       style="width: 100px; height: 35px; border-radius: 8px;"
+       onclick="return confirm('هل أنت متأكد من الحذف؟')">
+      <i class="fas fa-trash text-white"></i> حذف
+    </a>
+  </li>
+
 </ul>
 
                                         </td>
