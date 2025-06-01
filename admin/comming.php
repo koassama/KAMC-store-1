@@ -108,16 +108,18 @@ $posts = $stmt->fetchAll();
         }
 
         .restore-btn {
-            background: linear-gradient(135deg, #10b981, #34d399);
-            color: white;
-            padding: 12px 25px;
-            border-radius: 12px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            display: inline-block;
-            margin: 20px 0;
-            font-weight: 600;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+                background: linear-gradient(135deg, rgb(40, 167, 46), rgb(154, 228, 175));
+    color: white;
+    padding: 12px 30px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+
         }
 
         .restore-btn:hover {
@@ -354,7 +356,8 @@ $posts = $stmt->fetchAll();
     font-size: 15px;
     outline: none;
     transition: border 0.3s ease;
-    width: 240px;
+    width: 240px
+    
 }
 
 .search-container input[type="text"]::placeholder {
@@ -443,10 +446,11 @@ $posts = $stmt->fetchAll();
                         <div class="right-header management-header">
                             <div class="btns">
                                 <a href="comming.php?page=add" class="add-btn"> <i class="fas fa-plus"></i> </a>
-                            <form method="GET" action="comming.php" class="search-container">
+                            
+     <form method="GET" action="reports.php" class="d-flex justify-content-end align-items-center mb-2" style="max-width: 240px;margin-top:80px;">
     <input type="hidden" name="page" value="manage">
-    <input type="text" name="search" placeholder="ابحث بالرقم التسلسلي" value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>">
-    <button type="submit">بحث</button>
+    <input type="text" name="search" class="form-control form-control-sm" placeholder="ابحث بالرقم التسلسلي" value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>">
+    <button type="submit" class="btn btn-primary btn-sm mx-2" >بحث</button>
 </form>
 
                             </div>
@@ -489,20 +493,34 @@ $posts = $stmt->fetchAll();
                                                 <td><?php echo $post['type']; ?></td>
                                                 <td><?php echo $post['type_sa']; ?></td>
                                                 <td>
-    <div class="d-flex flex-wrap gap-2">
-        <a href="download_word.php?id=<?php echo $post['id']; ?>" class="btn btn-sm btn-primary">
-            <i class="fas fa-download"></i> تحميل ملف word
-        </a>
-       <!-- Replace the existing edit button in comming.php with this: -->
-<a href="edit_comming.php?page=edit&id=<?php echo $post['id']; ?>" class="btn btn-sm btn-warning">
-    <i class="fas fa-edit"></i> تعديل
-</a>
-        <a href="comming.php?page=delete&id=<?php echo $post['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('هل تريد الحذف؟');">
-            <i class="fas fa-trash"></i> حذف
-        </a>
-    </div>
-</td>
+    
+<ul class="list-group list-group-horizontal">
+  <li class="list-group-item p-0 border-0">
+    <a href="reports.php?page=edit&id=<?= $row['id'] ?>" 
+       class="btn btn-warning btn-sm text-white mx-1" 
+       style="width: 100px; height: 35px; border-radius: 8px;">
+      <i class="fas fa-edit text-white"></i> تعديل
+    </a>
+  </li>
 
+  <li class="list-group-item p-0 border-0">
+    <a href="reports.php?page=delete&id=<?= $row['id'] ?>" 
+       class="btn btn-danger btn-sm text-white mx-1" 
+       style="width: 100px; height: 35px; border-radius: 8px;"
+       onclick="return confirm('هل أنت متأكد من الحذف؟')">
+      <i class="fas fa-trash text-white"></i> حذف
+    </a>
+  </li>
+
+  <li class="list-group-item p-0 border-0">
+    <a href="download_word.php?id=<?= $row['id'] ?>" 
+       class="btn btn-primary btn-sm text-white mx-1" 
+       style="width: 100px; height: 35px; border-radius: 8px;" 
+       target="_blank">
+      <i class="fas fa-print text-white"></i>  تحميل ملف word
+    </a>
+  </li>
+</ul>
                                             </tr>
                                         <?php endforeach; ?>
                                     </tbody>
@@ -880,4 +898,3 @@ function getArabicNumber(num) {
 }
 ob_end_flush();
 ?>
-
