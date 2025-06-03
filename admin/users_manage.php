@@ -471,7 +471,7 @@ if (isset($_SESSION['admin'])) {
                                            
 <ul class="list-group list-group-horizontal">
   <li class="list-group-item p-0 border-0">
-    <a href="reports.php?page=edit&id=<?= $row['id'] ?>" 
+    <a href="users_edit.php?id=<?php echo $user['id']; ?>"
        class="btn btn-warning btn-sm text-white mx-1" 
        style="width: 100px; height: 35px; border-radius: 8px;">
       <i class="fas fa-edit text-white"></i> تعديل
@@ -479,7 +479,7 @@ if (isset($_SESSION['admin'])) {
   </li>
 
   <li class="list-group-item p-0 border-0">
-    <a href="reports.php?page=delete&id=<?= $row['id'] ?>" 
+    <a href="users_delete.php?id=<?php echo $user['id']; ?>"
        class="btn btn-danger btn-sm text-white mx-1" 
        style="width: 100px; height: 35px; border-radius: 8px;"
        onclick="return confirm('هل أنت متأكد من الحذف؟')">
@@ -487,8 +487,10 @@ if (isset($_SESSION['admin'])) {
     </a>
   </li>
 
-  
+ 
+
 </ul>
+
 
                                             </div>
                                             <?php elseif ($_SESSION['id'] == $user['id']): ?>
