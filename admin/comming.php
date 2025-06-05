@@ -498,7 +498,7 @@ $posts = $stmt->fetchAll();
     
 <ul class="list-group list-group-horizontal">
   <li class="list-group-item p-0 border-0">
-    <a href="reports.php?page=edit&id=<?= $row['id'] ?>" 
+ <a href="edit_comming.php?page=edit&id=<?php echo $post['id']; ?>"
        class="btn btn-warning btn-sm text-white mx-1" 
        style="width: 100px; height: 35px; border-radius: 8px;">
       <i class="fas fa-edit text-white"></i> تعديل
@@ -506,7 +506,7 @@ $posts = $stmt->fetchAll();
   </li>
 
   <li class="list-group-item p-0 border-0">
-    <a href="reports.php?page=delete&id=<?= $row['id'] ?>" 
+   <a href="comming.php?page=delete&id=<?php echo $post['id']; ?>"
        class="btn btn-danger btn-sm text-white mx-1" 
        style="width: 100px; height: 35px; border-radius: 8px;"
        onclick="return confirm('هل أنت متأكد من الحذف؟')">
@@ -515,13 +515,14 @@ $posts = $stmt->fetchAll();
   </li>
 
   <li class="list-group-item p-0 border-0">
-    <a href="download_word.php?id=<?= $row['id'] ?>" 
+   <a href="download_word.php?id=<?php echo $post['id']; ?>" 
        class="btn btn-primary btn-sm text-white mx-1" 
        style="width: 100px; height: 35px; border-radius: 8px;" 
        target="_blank">
       <i class="fas fa-print text-white"></i>  تحميل ملف word
     </a>
   </li>
+   
 </ul>
                                             </tr>
                                         <?php endforeach; ?>
