@@ -330,7 +330,7 @@ if (isset($_SESSION['admin'])) {
                                         <td>
                                          <ul class="list-group list-group-horizontal">
   <li class="list-group-item p-0 border-0">
-    <a href="reports.php?page=edit&id=<?= $row['id'] ?>" 
+    <a href="edit.php?id=<?php echo $post['id']; ?>"
        class="btn btn-warning btn-sm text-white mx-1" 
        style="width: 100px; height: 35px; border-radius: 8px;">
       <i class="fas fa-edit text-white"></i> تعديل
@@ -338,7 +338,7 @@ if (isset($_SESSION['admin'])) {
   </li>
 
   <li class="list-group-item p-0 border-0">
-    <a href="reports.php?page=delete&id=<?= $row['id'] ?>" 
+    <a href="delete.php?id=<?php echo $post['id']; ?>"  
        class="btn btn-danger btn-sm text-white mx-1" 
        style="width: 100px; height: 35px; border-radius: 8px;"
        onclick="return confirm('هل أنت متأكد من الحذف؟')">
