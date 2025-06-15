@@ -444,11 +444,16 @@ $posts = $stmt->fetchAll();
                             <div class="btns">
                                 <a href="comming.php?page=add" class="add-btn"> <i class="fas fa-plus"></i> </a>
                             <form method="GET" action="comming.php" class="search-container">
+    <form method="GET" action="comming.php" class="search-container">
     <input type="hidden" name="page" value="manage">
     <input type="text" name="search" placeholder="ابحث بالرقم التسلسلي" value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>">
     <button type="submit">بحث</button>
 </form>
-
+<form method="GET" action="comming.php" class="search-container" style="margin-top: 10px;">
+    <input type="hidden" name="page" value="pull">
+    <input type="text" name="pull_sr" placeholder="جلب من المخزون بالرقم" value="">
+    <button type="submit">جلب</button>
+</form>
                             </div>
                         </div>
                     </div>
@@ -852,7 +857,35 @@ function getArabicNumber(num) {
                 }
             }
 
-            header("Location: comming.php?page=manage");
+             header("Location: comming.php?page=manage");
+            exit;
+        }
+    } elseif ($page == 'pull') {
+        include 'init.php';
+        $sr = isset($_GET['pull_sr']) ? trim($_GET['pull_sr']) : '';
+        if ($sr !== '') {
+            $stmt_check = $conn->prepare("SELECT * FROM products WHERE sr = ? LIMIT 1");
+            $stmt_check->execute([$sr]);
+            $product = $stmt_check->fetch(PDO::FETCH_ASSOC);
+
+            if ($product) {
+                $stmt_insert = $conn->prepare("INSERT INTO comming (sr, remarq, Management, name, custody, maintenance, type, type_sa) VALUES (?, ?, ?, ?, '', 0, 'الشركة', 'بالمنشأة')");
+                $stmt_insert->execute([
+                    $product['sr'],
+                    isset($product['notes']) ? $product['notes'] : '',
+                    isset($product['department']) ? $product['department'] : '',
+                    isset($product['device_name']) ? $product['device_name'] : (isset($product['name']) ? $product['name'] : '')
+                ]);
+                $newId = $conn->lastInsertId();
+                $conn->prepare("DELETE FROM products WHERE sr = ?")->execute([$sr]);
+                header("Location: download_word.php?id=" . $newId);
+                exit;
+            } else {
+                header("Location: comming.php?page=manage&error=notfound");
+                exit;
+            }
+        } else {
+            header('Location: comming.php?page=manage');
             exit;
         }
     } elseif ($page == 'delete') {
